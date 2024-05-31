@@ -4,7 +4,9 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  background: #fdde00;
+  --global-bg: #fdde00;
+  transition: background-color 0.5s ease-out;
+  background-color: var(--global-bg);
 }
 
 body {
