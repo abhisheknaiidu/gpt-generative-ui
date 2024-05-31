@@ -4,9 +4,11 @@ import bg from "@/assets/bg.svg";
 import bonk from "@/assets/bonk.png";
 import { IconBrandGithub, IconSparkles } from "@tabler/icons-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export default function Chat() {
+  const router = useRouter();
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -41,6 +43,15 @@ export default function Chat() {
               className="w-full bg-white bg-opacity-80 items-center justify-center grid rounded-[1.2rem] pl-4 gap-2"
               style={{
                 gridTemplateColumns: "auto 1fr auto",
+              }}
+              onSubmit={(e) => {
+                e.preventDefault();
+                router.push(
+                  `/${ref.current?.value
+                    .toLowerCase()
+                    .trim()
+                    .replace(/\s/g, "-")}`
+                );
               }}
             >
               <div className="font-bold">ASK /</div>
