@@ -4,8 +4,15 @@ import bg from "@/assets/bg.svg";
 import bonk from "@/assets/bonk.png";
 import { IconBrandGithub, IconSparkles } from "@tabler/icons-react";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 
 export default function Chat() {
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    ref.current?.focus?.();
+  }, []);
+
   return (
     <>
       <Image
@@ -29,8 +36,8 @@ export default function Chat() {
             <br />
             BONK Coin
           </h1>
-          <div className="flex items-center justify-center border border-[#020227] border-opacity-30 p-1.5 rounded-[1.7rem] w-full max-w-[35rem] mt-4">
-            <div
+          <div className="flex items-center justify-center outline outline-[#ADAA9E] border-opacity-30 p-1.5 rounded-[1.7rem] w-full max-w-[35rem] mt-4 focus-within:outline-[2px] transition-all duration-100">
+            <form
               className="w-full bg-white bg-opacity-80 items-center justify-center grid rounded-[1.2rem] pl-4 gap-2"
               style={{
                 gridTemplateColumns: "auto 1fr auto",
@@ -38,15 +45,20 @@ export default function Chat() {
             >
               <div className="font-bold">ASK /</div>
               <input
+                name="topic"
                 type="topic"
                 placeholder="HOW BONK WORKS..."
                 className="!bg-transparent !border-none !outline-none"
+                ref={ref}
               />
-              <button className="btn !rounded-[1.2rem] btn-md !h-[3.5rem]">
+              <button
+                type="submit"
+                className="btn !rounded-[1.2rem] btn-md !h-[3.5rem]"
+              >
                 GENERATE
                 <IconSparkles color="white" />
               </button>
-            </div>
+            </form>
           </div>
         </div>
         <div className="in-s uppercase max-w-[28rem] text-center text-sm opacity-80">
