@@ -1,91 +1,70 @@
 "use client";
 
-import { type CoreMessage } from "ai";
-import { useState } from "react";
-import { continueConversation } from "./actions";
-import { readStreamableValue } from "ai/rsc";
-import endent from "endent";
-
-type Source = {
-  url: string;
-  text: string;
-};
+import bg from "@/assets/bg.svg";
+import bonk from "@/assets/bonk.png";
+import { IconBrandGithub, IconSparkles } from "@tabler/icons-react";
+import Image from "next/image";
 
 export default function Chat() {
-  const [messages, setMessages] = useState<CoreMessage[]>([]);
-  const [input, setInput] = useState("");
-  const [data, setData] = useState<any>();
-  const [userMessage, setUserMessage] = useState("");
-
-  const fetchSources = async () => {
-    const response = await fetch("/api/sources", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query: input }),
-    });
-    if (!response.ok) {
-      // setLoading(false);
-      throw new Error(response.statusText);
-    }
-
-    const { sources }: { sources: Source[] } = await response.json();
-
-    return sources;
-  };
-
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
-      {messages.map((m, i) => (
-        <div key={i} className="whitespace-pre-wrap">
-          {m.role === "user" ? "User: " : "AI: "}
-          {m.role === "user" ? userMessage : (m.content as string)}
-        </div>
-      ))}
-
-      <form
-        action={async () => {
-          const sources = await fetchSources();
-          const prompt = endent`Provide a 2-3 sentence answer to the query based on the following sources. Be original, concise, accurate, and helpful. Cite sources as [1] or [2] or [3] after each sentence (not just the very end) to back up your answer (Ex: Correct: [1], Correct: [2][3], Incorrect: [1, 2]).
-      
-      ${sources
-        .map((source, idx) => `Source [${idx + 1}]:\n${source.text}`)
-        .join("\n\n")}
-      `;
-          const newMessages: CoreMessage[] = [
-            ...messages,
-            { content: prompt, role: "user" },
-          ];
-
-          setMessages(newMessages);
-          setInput("");
-
-          const result = await continueConversation(newMessages);
-          setData(result.data);
-
-          for await (const content of readStreamableValue(result.message)) {
-            setMessages([
-              ...newMessages,
-              {
-                role: "assistant",
-                content: content as string,
-              },
-            ]);
-          }
+    <>
+      <Image
+        src={bg}
+        alt="Background"
+        className="h-full w-[80vw] mx-auto -z-10 opacity-80 fixed top-0 left-[10vw]"
+        objectFit="fill"
+        priority
+        style={{
+          filter: "drop-shadow(0px 4px 36px #B7A100)",
         }}
-      >
-        <input
-          className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded text-black shadow-xl"
-          value={input}
-          placeholder="Say something..."
-          onChange={(e) => {
-            setInput(e.target.value);
-            setUserMessage(e.target.value);
-          }}
-        />
-      </form>
-    </div>
+      />
+      <div className="min-h-[100dvh] flex flex-col justify-center items-center py-20 gap-10">
+        <div className="flex flex-col gap-5 items-center my-auto">
+          <div className="py-2 px-4 flex gap-4 bg-[#020227] bg-opacity-5 rounded-full">
+            <div>MORE THAN JUST FAQ</div>
+            <Image src={bonk} alt="Bonk" height={24} />
+          </div>
+          <h1 className="in-s text-7xl text-center uppercase">
+            Dive Deep into
+            <br />
+            BONK Coin
+          </h1>
+          <div className="flex items-center justify-center border border-[#020227] border-opacity-30 p-1.5 rounded-[1.7rem] w-full max-w-[35rem] mt-4">
+            <div
+              className="w-full bg-white bg-opacity-80 items-center justify-center grid rounded-[1.2rem] pl-4 gap-2"
+              style={{
+                gridTemplateColumns: "auto 1fr auto",
+              }}
+            >
+              <div className="font-bold">ASK /</div>
+              <input
+                type="topic"
+                placeholder="HOW BONK WORKS..."
+                className="!bg-transparent !border-none !outline-none"
+              />
+              <button className="btn !rounded-[1.2rem] btn-md !h-[3.5rem]">
+                GENERATE
+                <IconSparkles color="white" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="in-s uppercase max-w-[28rem] text-center text-sm opacity-80">
+          Dive into the fascinating world of BONK Coin with decks crafted by AI
+          to cater to your interests. Our platform empowers everyone to learn
+          and grow together
+        </div>
+      </div>
+      <div className="!rotate-90 fixed bottom-14 -right-4">
+        <a
+          href="https://github.com/abhisheknaiidu/gpt-generative-ui"
+          target="_blank"
+        >
+          <button className="!text-[#FDDE00] btn">
+            GiTHUB <IconBrandGithub size={20} color="#FDDE00" />
+          </button>
+        </a>
+      </div>
+    </>
   );
 }
