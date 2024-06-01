@@ -33,10 +33,10 @@ export default function Chat() {
             <div>MORE THAN JUST FAQ</div>
             <Image src={bonk} alt="Bonk" height={24} />
           </div>
-          <h1 className="in-s text-7xl text-center uppercase">
+          <h1 className="in-s text-7xl text-center uppercase leading-tight">
             Dive Deep into
             <br />
-            BONK Coin
+            ANYTHING
           </h1>
           <div className="flex items-center justify-center outline outline-[#ADAA9E] border-opacity-30 p-1.5 rounded-[1.7rem] w-full max-w-[35rem] mt-4 focus-within:outline-[2px] transition-all duration-100">
             <form

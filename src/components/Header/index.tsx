@@ -37,7 +37,7 @@ const Header = () => {
       }}
     >
       <Link href="/">
-        <Image src={Logo} alt="Bonk.info" height={36} />
+        <Image src={Logo} alt="Wagmi.info" height={36} />
       </Link>
       <button className="btn">CONNECT</button>
     </div>
