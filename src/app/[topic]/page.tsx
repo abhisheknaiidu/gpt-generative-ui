@@ -1,91 +1,163 @@
 "use client";
 
-import { type CoreMessage } from "ai";
-import { readStreamableValue } from "ai/rsc";
-import endent from "endent";
-import { useState } from "react";
-import { continueConversation } from "../actions";
+import TopicCard from "@/components/TopicCards/TopicCards";
+import { useHashState } from "@/hooks/useHashState";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import classNames from "classnames";
+import Link from "next/link";
 
-type Source = {
-  url: string;
-  text: string;
-};
+const MAX_W = 500;
 
 export default function Chat() {
-  const [messages, setMessages] = useState<CoreMessage[]>([]);
-  const [input, setInput] = useState("");
-  const [data, setData] = useState<any>();
-  const [userMessage, setUserMessage] = useState("");
-
-  const fetchSources = async () => {
-    const response = await fetch("/api/sources", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query: input }),
-    });
-    if (!response.ok) {
-      // setLoading(false);
-      throw new Error(response.statusText);
-    }
-
-    const { sources }: { sources: Source[] } = await response.json();
-
-    return sources;
-  };
+  const title = "How Bonk Works?";
+  const [hash, setHash] = useHashState();
+  const currentItem = parseInt(hash.split("item")[1] || "0");
+  const data = [
+    {
+      title: "What is Bonk Coin?",
+      description: [
+        "Bonk Coin, also known as BONK, is a dog-themed meme coin built on the Solana blockchain.",
+        "It was introduced as a free airdrop to the Solana community on Christmas day 2022.",
+        "Inspired by popular memecoins like Dogecoin (DOGE), BONK's mascot is a Shiba Inu dog.",
+        "Despite having no specific utility initially, BONK has been integrated into more than 110 DeFi, gaming, and other sectors.",
+        "Its rapid popularity highlights the community-driven nature of meme coins.",
+      ],
+      imageGenerationPrompt:
+        "An illustration of a Shiba Inu dog in a festive setting, with 'BONK' written across the scene on a blockchain background.",
+      imageDimensions: "1024x1024",
+    },
+    {
+      title: "BONK Tokenomics",
+      description: [
+        "BONK Tokenomics deals with the supply, distribution, and demand of the cryptocurrency.",
+        "The project airdropped 50% of its total supply to Solana NFT enthusiasts, DeFi traders, artists, and collectors.",
+        "This method of distribution was aimed at reversing the trend of predatory VC tokens on the Solana network.",
+        "BONK's supply dynamics helped in garnering a strong and diverse community backing.",
+        "Understanding BONK's tokenomics is crucial for anyone looking to invest.",
+      ],
+      imageGenerationPrompt:
+        "A pie chart showing the distribution of BONK tokens along with icons of NFTs, traders, artists, and collectors.",
+      imageDimensions: "1792x1024",
+    },
+    {
+      title: "How to Buy BONK",
+      description: [
+        "BONK can be purchased on multiple major cryptocurrency exchanges including Coinbase, Binance, OKX, and Gate.io.",
+        "It's crucial to have a secure wallet compatible with the Solana blockchain for storing BONK.",
+        "Prospective buyers should be cautious of scams while claiming BONK airdrops or purchasing from unofficial sources.",
+        "Research and verification of the exchange's legitimacy are essential before trading BONK.",
+        "Users can also engage in staking BONK to earn yields on various DeFi platforms.",
+      ],
+      imageGenerationPrompt:
+        "A step-by-step infographic showing how to buy BONK on various exchanges, secure wallets, and staking methods.",
+      imageDimensions: "1024x1792",
+    },
+    {
+      title: "Unique Features of BONK",
+      description: [
+        "BONK stands out for its community-driven distribution model and extensive integrations.",
+        "Launched during a harsh crypto winter, it quickly surged over 25,000% in value.",
+        "BONK offers single-sided staking pools, allowing holders to earn yields without involving a second asset.",
+        "Its listing on major exchanges like Coinbase and Binance significantly boosted its legitimacy.",
+        "BONK offers derivatives trading on platforms like Bitmex, allowing trades with up to 10x leverage.",
+      ],
+      imageGenerationPrompt:
+        "An illustration showing BONK’s unique features: community distribution, staking pools, exchange listings, and derivatives trading.",
+      imageDimensions: "512x512",
+    },
+    {
+      title: "Future Prospects of BONK",
+      description: [
+        "The future of BONK seems promising, leveraged by its strong community support and integration with DeFi and gaming sectors.",
+        "Continuous development and new integrations can further enhance its utility and appeal.",
+        "The project aims to be recognized as the 'community coin of Solana,' used across decentralized apps.",
+        "Market adoption and legitimacy increase with each new major exchange listing.",
+        "As with any investment, potential investors should keep an eye on technological and market risks.",
+      ],
+      imageGenerationPrompt:
+        "A futuristic representation of the Solana blockchain integrated with various sectors like DeFi, gaming, and decentralized apps, all revolving around BONK.",
+      imageDimensions: "1024x1024",
+    },
+  ];
 
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
-      {messages.map((m, i) => (
-        <div key={i} className="whitespace-pre-wrap">
-          {m.role === "user" ? "User: " : "AI: "}
-          {m.role === "user" ? userMessage : (m.content as string)}
-        </div>
-      ))}
-
-      <form
-        action={async () => {
-          const sources = await fetchSources();
-          const prompt = endent`Provide a 2-3 sentence answer to the query based on the following sources. Be original, concise, accurate, and helpful. Cite sources as [1] or [2] or [3] after each sentence (not just the very end) to back up your answer (Ex: Correct: [1], Correct: [2][3], Incorrect: [1, 2]).
-      
-      ${sources
-        .map((source, idx) => `Source [${idx + 1}]:\n${source.text}`)
-        .join("\n\n")}
-      `;
-          const newMessages: CoreMessage[] = [
-            ...messages,
-            { content: prompt, role: "user" },
-          ];
-
-          setMessages(newMessages);
-          setInput("");
-
-          const result = await continueConversation(newMessages);
-          setData(result.data);
-
-          for await (const content of readStreamableValue(result.message)) {
-            setMessages([
-              ...newMessages,
-              {
-                role: "assistant",
-                content: content as string,
-              },
-            ]);
-          }
-        }}
-      >
-        <input
-          className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded text-black shadow-xl"
-          value={input}
-          placeholder="Say something..."
-          onChange={(e) => {
-            setInput(e.target.value);
-            setUserMessage(e.target.value);
+    <div className={`min-h-full`}>
+      <div className="pt-[3.9rem] bg-[#FDDE00] flex flex-col items-center justify-center pb-5">
+        <div
+          className="flex items-center justify-center w-full py-5 relative"
+          style={{
+            maxWidth: `${MAX_W / 16}rem`,
           }}
-        />
-      </form>
+        >
+          <Link href="/" className="absolute left-0">
+            <IconChevronLeft />
+          </Link>
+          <div className="uppercase font-semibold">{title}</div>
+        </div>
+        <div className="flex gap-5 w-full items-center justify-center">
+          <Link
+            href={currentItem > 0 ? `#item${currentItem - 1}` : ""}
+            className={classNames(
+              "btn btn-xs !bg-white bg-opacity-70 outline-none border-none px-4 py-1.5 !h-fit",
+              {
+                "opacity-50 cursor-not-allowed": currentItem === 0,
+              }
+            )}
+            aria-disabled={currentItem === 0}
+            tabIndex={currentItem === 0 ? -1 : undefined}
+            onClick={(e) => {
+              currentItem === 0 && e.preventDefault();
+            }}
+          >
+            <IconChevronLeft size={16} />
+          </Link>
+          <div
+            className="carousel flex gap-4"
+            style={{
+              maxWidth: `${MAX_W / 16}rem`,
+            }}
+          >
+            {data.map((item, index) => (
+              <div key={index} id={`item${index}`} className="carousel-item">
+                <TopicCard
+                  cardType={item.imageDimensions}
+                  cardIndex={index}
+                  cardProps={{
+                    title: item.title,
+                    description: item.description,
+                    // image:
+                    //   "https://oaidalleapiprodscus.blob.core.windows.net/private/org-VtjMqVcJ39WS0ytH0Qr3sqxF/user-OyCviQyV6tSxjLBAdKWc2RQ8/img-ChDiS3IAPMBRJeUYErtjjYxY.png?st=2024-05-31T22%3A57%3A52Z&se=2024-06-01T00%3A57%3A52Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-31T23%3A49%3A30Z&ske=2024-06-01T23%3A49%3A30Z&sks=b&skv=2023-11-03&sig=gQWvw8C0BKe7kXdL173T9cOSTtojtqLxm6f4kexmRWI%3D",
+                    image: {
+                      prompt: item.imageGenerationPrompt,
+                      size: item.imageDimensions,
+                    },
+                    size: MAX_W,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          <Link
+            href={
+              currentItem < data.length - 1 ? `#item${currentItem + 1}` : ""
+            }
+            className={classNames(
+              "btn btn-xs !bg-white bg-opacity-70 outline-none border-none px-4 py-1.5 !h-fit",
+              {
+                "opacity-50 cursor-not-allowed":
+                  currentItem === data.length - 1,
+              }
+            )}
+            aria-disabled={currentItem === data.length - 1}
+            tabIndex={currentItem === data.length - 1 ? -1 : undefined}
+            onClick={(e) => {
+              currentItem === data.length - 1 && e.preventDefault();
+            }}
+          >
+            <IconChevronRight size={16} />
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
