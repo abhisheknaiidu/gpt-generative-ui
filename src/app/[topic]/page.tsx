@@ -95,8 +95,7 @@ export default function Chat() {
           <div className="uppercase font-semibold">{title}</div>
         </div>
         <div className="flex gap-5 w-full items-center justify-center">
-          <Link
-            href={currentItem > 0 ? `#item${currentItem - 1}` : ""}
+          <div
             className={classNames(
               "btn btn-xs !bg-white bg-opacity-70 outline-none border-none px-4 py-1.5 !h-fit",
               {
@@ -106,11 +105,13 @@ export default function Chat() {
             aria-disabled={currentItem === 0}
             tabIndex={currentItem === 0 ? -1 : undefined}
             onClick={(e) => {
-              currentItem === 0 && e.preventDefault();
+              e.preventDefault();
+              if (currentItem === 0) return;
+              setHash(`item${currentItem - 1}`);
             }}
           >
             <IconChevronLeft size={16} />
-          </Link>
+          </div>
           <div
             className="carousel flex gap-4"
             style={{
@@ -137,10 +138,7 @@ export default function Chat() {
               </div>
             ))}
           </div>
-          <Link
-            href={
-              currentItem < data.length - 1 ? `#item${currentItem + 1}` : ""
-            }
+          <div
             className={classNames(
               "btn btn-xs !bg-white bg-opacity-70 outline-none border-none px-4 py-1.5 !h-fit",
               {
@@ -151,11 +149,13 @@ export default function Chat() {
             aria-disabled={currentItem === data.length - 1}
             tabIndex={currentItem === data.length - 1 ? -1 : undefined}
             onClick={(e) => {
-              currentItem === data.length - 1 && e.preventDefault();
+              e.preventDefault();
+              if (currentItem === data.length - 1) return;
+              setHash(`item${currentItem + 1}`);
             }}
           >
             <IconChevronRight size={16} />
-          </Link>
+          </div>
         </div>
       </div>
     </div>
