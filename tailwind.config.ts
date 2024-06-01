@@ -9,7 +9,7 @@ const config: Config = {
   daisyui: {
     themes: [
       {
-        bonk: {
+        wagmi: {
           primary: "#020227",
           "primary-content": "#F5F5F5",
           secondary: "#FDDE00",
