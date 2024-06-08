@@ -1,9 +1,10 @@
-import NextImage, { StaticImageData } from "next/image";
-import { Props } from "./tc.types";
-import { useEffect, useState } from "react";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import LoadingGIF from "@/assets/loading.gif";
 import classNames from "classnames";
+import { motion } from "framer-motion";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import NextImage from "next/image";
+import { useEffect, useState } from "react";
+import { Props } from "./tc.types";
 
 const Image = (props: React.ComponentProps<typeof NextImage>) => {
   const [loaderVisible, setLoaderVisible] = useState(true);
@@ -69,7 +70,7 @@ export const TopicCard1 = ({ title, description, image, size }: Props) => {
           aspectRatio: "1792/1024",
         }}
       >
-        <Image fill src={image} alt={title} />
+        <Image fill src={image} alt={title} objectFit="cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
         <p className="text-black absolute bottom-3 left-4 z-20 text-xl font-bold">
           {title}
@@ -101,7 +102,7 @@ export const TopicCard2 = ({ title, description, image, size }: Props) => {
           aspectRatio: "1792/1024",
         }}
       >
-        <Image fill src={image} alt={title} />
+        <Image fill src={image} alt={title} objectFit="cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
         <p className="text-black absolute bottom-4 right-4 z-20 text-xl font-bold text-right">
           {title}
@@ -133,7 +134,7 @@ export const TopicCard3 = ({ title, description, image, size }: Props) => {
           aspectRatio: "1792/1024",
         }}
       >
-        <Image fill src={image} alt={title} />
+        <Image fill src={image} alt={title} objectFit="cover" />
         <div className="absolute inset-0 bg-gradient-to-l from-transparent to-white" />
         <p className="text-black absolute top-4 left-4 z-20 text-2xl font-bold text-left max-w-32">
           {title}
@@ -165,9 +166,9 @@ export const TopicCard4 = ({ title, description, image, size }: Props) => {
           aspectRatio: "1792/1024",
         }}
       >
-        <Image fill src={image} alt={title} />
+        <Image fill src={image} alt={title} objectFit="cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white" />
-        <p className="text-black absolute top-4 right-4 z-20 text-2xl font-bold text-right max-w-[25%]">
+        <p className="text-black absolute top-4 right-4 z-20 text-2xl font-bold text-right max-w-[50%]">
           {title}
         </p>
       </div>
@@ -237,9 +238,7 @@ export const TopicCard6 = ({ title, description, image, size }: Props) => {
         >
           <Image fill src={image} alt={title} objectFit="cover" />
         </div>
-        <p className="text-black text-3xl font-bold text-left w-1/2 mt-2">
-          {title}
-        </p>
+        <p className="text-black text-2xl font-bold text-left mt-2">{title}</p>
       </div>
       <div className="flex flex-col gap-5 p-3">
         {description.map((desc, index) => (
@@ -271,7 +270,7 @@ export const TopicCard7 = ({ title, description, image, size }: Props) => {
           <Image fill src={image} alt={title} objectFit="cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white" />
         </div>
-        <p className="text-black text-3xl font-bold text-right pl-[20%] mt-2 mr-4">
+        <p className="text-black text-2xl font-bold text-right mt-2 mr-4">
           {title}
         </p>
       </div>
@@ -393,14 +392,20 @@ export const TopicCard = ({
     ];
 
   return (
-    <Card
-      title={cardProps.title}
-      description={cardProps.description}
-      image={`/api/image?prompt=${encodeURIComponent(
-        cardProps.image.prompt
-      )}&size=${encodeURIComponent(cardProps.image.size)}`}
-      size={cardProps.size}
-    />
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card
+        title={cardProps.title}
+        description={cardProps.description}
+        image={`/api/image?prompt=${encodeURIComponent(
+          cardProps.image.prompt
+        )}&size=${encodeURIComponent(cardProps.image.size)}`}
+        size={cardProps.size}
+      />
+    </motion.div>
   );
 };
 

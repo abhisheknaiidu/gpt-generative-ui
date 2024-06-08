@@ -19,10 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="wagmi">
       <style>{`
-        .in-s {
-          font-family: ${instrumentSans.style.fontFamily};
-          font-style: ${instrumentSans.style.fontStyle};
-        }
+        // .in-s {
+        //   font-family: ${instrumentSans.style.fontFamily};
+        //   font-style: ${instrumentSans.style.fontStyle};
+        // }
         .sp-m {
           font-family: ${spaceMono.style.fontFamily};
           font-weight: ${spaceMono.style.fontWeight};

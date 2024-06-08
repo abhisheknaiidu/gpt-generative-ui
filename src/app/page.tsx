@@ -46,20 +46,15 @@ export default function Chat() {
               }}
               onSubmit={(e) => {
                 e.preventDefault();
-                router.push(
-                  `/${ref.current?.value
-                    .toLowerCase()
-                    .trim()
-                    .replace(/\s/g, "-")}`
-                );
+                router.push(`/${ref.current?.value.toLowerCase().trim()}`);
               }}
             >
               <div className="font-bold">ASK /</div>
               <input
                 name="topic"
                 type="topic"
-                placeholder="HOW BONK WORKS..."
-                className="!bg-transparent !border-none !outline-none"
+                placeholder="WHAT IS DOGE COIN..."
+                className="!bg-transparent !border-none !outline-none uppercase"
                 ref={ref}
               />
               <button

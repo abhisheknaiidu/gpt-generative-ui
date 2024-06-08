@@ -1,124 +1,49 @@
-import { Readability } from "@mozilla/readability";
-import * as cheerio from "cheerio";
-import { JSDOM } from "jsdom";
+import { InternetSource } from "@/app/types/sources";
+import { queryAssistant } from "@/services/ai";
+import { getTopicSources } from "@/services/search";
+import { OPENAI_ASSISTANTS } from "@/utils/constants";
 import { NextRequest, NextResponse } from "next/server";
 
-type Source = {
-  url: string;
-  text: string;
+type CarouselItem = {
+  title: string;
+  description: string[];
+  imageGenerationPrompt: string;
+  imageDimensions: "1024x1792" | "1792x1024" | "1024x1024" | "512x512";
 };
 
-export enum OpenAIModel {
-  DAVINCI_TURBO = "gpt-4-turbo",
-}
-
-const cleanSourceText = (text: string) => {
-  return text
-    .trim()
-    .replace(/(\n){4,}/g, "\n\n\n")
-    .replace(/\n\n/g, " ")
-    .replace(/ {3,}/g, "  ")
-    .replace(/\t/g, "")
-    .replace(/\n+(\s*\n)*/g, "\n");
-};
-
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const data = (await req.json()) as {
-      topic: string;
-    };
-
-    const { topic } = data;
-
-    const sourceCount = 4;
-
-    console.log("query", data, topic);
-
-    // GET LINKS
-    const response = await fetch(`https://www.google.com/search?q=${topic}`);
-    const html = await response.text();
-    const $ = cheerio.load(html);
-    const linkTags = $("a");
-
-    let links: string[] = [];
-
-    linkTags.each((i, link) => {
-      const href = $(link).attr("href");
-      console.log("href<<<<<", href);
-
-      if (href && href.startsWith("/url?q=")) {
-        const cleanedHref = decodeURIComponent(
-          href.replace("/url?q=", "").split("&")[0]
-        );
-
-        if (
-          !links.includes(cleanedHref) &&
-          (cleanedHref.startsWith("http://") ||
-            cleanedHref.startsWith("https://"))
-        ) {
-          links.push(cleanedHref);
-        }
-      }
-    });
-
-    const filteredLinks = links.filter((link, idx) => {
-      try {
-        const domain = new URL(link).hostname;
-
-        const excludeList = [
-          "google",
-          "facebook",
-          "twitter",
-          "instagram",
-          "youtube",
-          "tiktok",
-        ];
-        if (excludeList.some((site) => domain.includes(site))) return false;
-
-        return (
-          links.findIndex((link) => new URL(link).hostname === domain) === idx
-        );
-      } catch (err) {
-        console.error(`Invalid URL: ${link}`, err);
-        return false;
-      }
-    });
-
-    const finalLinks = filteredLinks.slice(0, sourceCount);
-
-    // SCRAPE TEXT FROM LINKS
-    const sources = (await Promise.all(
-      finalLinks.map(async (link) => {
-        try {
-          const response = await fetch(link);
-          const html = await response.text();
-          const dom = new JSDOM(html);
-          const doc = dom.window.document;
-          const parsed = new Readability(doc).parse();
-
-          if (parsed) {
-            let sourceText = cleanSourceText(parsed.textContent);
-
-            return { url: link, text: sourceText };
-          }
-        } catch (err) {
-          console.error(`Error fetching or parsing URL: ${link}`, err);
-          return undefined;
-        }
-      })
-    )) as Source[];
-
-    const filteredSources = sources.filter((source) => source !== undefined);
-
-    for (const source of filteredSources) {
-      source.text = source.text.slice(0, 1500);
+    const topic = req.nextUrl.searchParams.get("topic");
+    if (!topic) {
+      return NextResponse.json({ sources: [] }, { status: 400 });
     }
 
-    console.log(filteredSources);
+    const sources = await getTopicSources(topic);
 
-    return NextResponse.json({ sources: filteredSources }, { status: 200 });
+    const message = buildQuery(topic, sources);
+    const response = await queryAssistant(
+      OPENAI_ASSISTANTS.CAROUSEL_GENERATOR,
+      message
+    );
+
+    let carouselData: CarouselItem[];
+    try {
+      carouselData = JSON.parse(response).data;
+    } catch (e) {
+      console.log("ERROR PARSING RESPONSE: ", response);
+      throw e;
+    }
+
+    return NextResponse.json(carouselData, { status: 200 });
   } catch (err) {
     console.log(err);
     return NextResponse.json({ sources: [] }, { status: 500 });
   }
 }
+
+const buildQuery = (topic: string, sources: InternetSource[]) => {
+  return `
+    TOPIC: ${topic},
+    DATA: ${JSON.stringify(sources, null, 2)}
+  `;
+};

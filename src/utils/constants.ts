@@ -1,0 +1,3 @@
+export const OPENAI_ASSISTANTS = {
+  CAROUSEL_GENERATOR: "asst_v4ScZTsTV0cbb5I2JpCwF0NQ",
+};
