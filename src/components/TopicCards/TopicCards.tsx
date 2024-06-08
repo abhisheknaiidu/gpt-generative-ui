@@ -345,20 +345,6 @@ export const TopicCard9 = ({ title, description, image, size }: Props) => {
   );
 };
 
-// const CardMappping: {
-//   [key: number]: (props: Props) => JSX.Element;
-// } = {
-//   1: TopicCard1,
-//   2: TopicCard2,
-//   3: TopicCard3,
-//   4: TopicCard4,
-//   5: TopicCard5,
-//   6: TopicCard6,
-//   7: TopicCard7,
-//   8: TopicCard8,
-//   9: TopicCard9,
-// };
-
 const CardMappingBasedOnImageDimensions: {
   [key: string]: ((props: Props) => JSX.Element)[];
 } = {
