@@ -304,7 +304,7 @@ export const TopicCard8 = ({ title, description, image, size }: Props) => {
         <div className="absolute inset-0 bg-gradient-to-b from-[#ffffffaa] to-white" />
       </div>
       <div className="absolute bottom-4 flex flex-col gap-3 p-3">
-        <p className="text-black text-xl font-bold">{title}</p>
+        <p className="text-black text-xl font-bold text-center">{title}</p>
         {description.map((desc, index) => (
           <p key={index} className="text-gray-500 text-sm">
             {desc}
@@ -334,7 +334,7 @@ export const TopicCard9 = ({ title, description, image, size }: Props) => {
         <div className="absolute inset-0 bg-gradient-to-t from-[#ffffffbb] to-white" />
       </div>
       <div className="absolute top-10 flex flex-col items-center gap-6 justify-center p-3">
-        <p className="text-black text-xl font-bold">{title}</p>
+        <p className="text-black text-xl font-bold text-center">{title}</p>
         {description.map((desc, index) => (
           <p key={index} className="text-gray-500 text-sm text-center">
             {desc}
