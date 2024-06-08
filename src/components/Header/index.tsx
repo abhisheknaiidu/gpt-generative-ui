@@ -22,7 +22,7 @@ const Header = () => {
   return (
     <div
       className={classNames(
-        "transition-all duration-500 bg-[#FFFFFF] mx-auto fixed h-16 flex items-center justify-between w-full",
+        "z-40 transition-all duration-500 bg-[#FFFFFF] mx-auto fixed h-16 flex items-center justify-between w-full",
         {
           "rounded-[2rem] max-w-[38rem] backdrop-blur-lg top-7 left-[50%] -translate-x-1/2 px-3 bg-opacity-50":
             isHome,

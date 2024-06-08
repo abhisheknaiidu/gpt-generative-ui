@@ -1,5 +1,5 @@
 import { InternetSource } from "@/app/types/sources";
-import { queryAssistant } from "@/services/ai";
+import { queryAssistantV1 } from "@/services/ai";
 import { getTopicSources } from "@/services/search";
 import { OPENAI_ASSISTANTS } from "@/utils/constants";
 import { NextRequest, NextResponse } from "next/server";
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const sources = await getTopicSources(topic);
 
     const message = buildQuery(topic, sources);
-    const response = await queryAssistant(
+    const response = await queryAssistantV1(
       OPENAI_ASSISTANTS.CAROUSEL_GENERATOR,
       message
     );

@@ -56,6 +56,7 @@ export default function Chat() {
                 placeholder="WHAT IS DOGE COIN..."
                 className="!bg-transparent !border-none !outline-none uppercase"
                 ref={ref}
+                autoComplete="off"
               />
               <button
                 type="submit"

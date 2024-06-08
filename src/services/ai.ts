@@ -1,3 +1,4 @@
+import { OPENAI_ASSISTANT_PROMPTS, OPENAI_ASSISTANTS } from "@/utils/constants";
 import OpenAI from "openai";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -38,7 +39,12 @@ const extractTextFromResponse = (messages: any): string | undefined => {
   return response?.text?.value;
 };
 
-export const queryAssistant = async (assistantId: string, message: string) => {
+// Accurate but slow output format
+export const queryAssistantV1 = async (
+  assistantId: string,
+  message: string
+) => {
+  console.time("queryAssistantV1");
   const thread = await createThread(message);
   await runThread(thread.id, assistantId);
   const messages = await openai.beta.threads.messages.list(thread.id);
@@ -49,5 +55,31 @@ export const queryAssistant = async (assistantId: string, message: string) => {
     throw new Error("Unable to generate data from assistant.");
   }
 
+  console.timeEnd("queryAssistantV1");
   return text;
+};
+
+// Fast but unpredictable output format
+export const queryAssistantV2 = async (
+  assistantId: OPENAI_ASSISTANTS,
+  message: string
+) => {
+  console.time("queryAssistantV2");
+
+  const response = await openai.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: OPENAI_ASSISTANT_PROMPTS[assistantId],
+      },
+      { role: "user", content: message },
+    ],
+    model: "gpt-4o",
+  });
+
+  if (!response.choices[0].message.content) {
+    throw new Error("Unable to generate data from assistant.");
+  }
+  console.timeEnd("queryAssistantV2");
+  return response.choices[0].message.content;
 };

@@ -3,18 +3,42 @@ import LoadingGIF from "@/assets/loading.gif";
 import TopicCard from "@/components/TopicCards/TopicCards";
 import { useHashState } from "@/hooks/useHashState";
 import { fetcher } from "@/utils/swr-fetcher";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconInfoSquareRounded,
+} from "@tabler/icons-react";
 import classNames from "classnames";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import useSWR from "swr";
+import { ChatDataType, ChatItem, ChatSource } from "../types/chat";
 
 const MAX_W = 500;
 
-export default function Chat() {
+const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
+  const { source, type, data } = chatItem;
+  if (type === ChatDataType.TEXT_MESSAGE)
+    return (
+      <div
+        className={classNames("p-2.5 px-4 rounded-lg max-w-[80%]", {
+          "bg-[#FDDE00] text-gray-700 self-end border border-gray-500 rounded-tr-none":
+            source === ChatSource.USER,
+          "bg-transparent text-gray-500 border-gray-500 border self-start rounded-tl-none":
+            source === ChatSource.WAGMI_AI,
+        })}
+      >
+        {data}
+      </div>
+    );
+
+  return null;
+};
+
+export default function Page() {
   const params = useParams();
   const topic = params.topic;
 
@@ -32,6 +56,32 @@ export default function Chat() {
     }
   );
 
+  const [messages, setMessages] = useState<ChatItem[]>([
+    {
+      source: ChatSource.WAGMI_AI,
+      type: ChatDataType.TEXT_MESSAGE,
+      data: "How can I help you?",
+    },
+    {
+      source: ChatSource.USER,
+      type: ChatDataType.TEXT_MESSAGE,
+      data: "What is Dogecoin?",
+    },
+  ]);
+
+  useEffect(() => {
+    const history = [
+      {
+        source: ChatSource.WAGMI_AI,
+        type: ChatDataType.TOPIC_CAROUSEL,
+        data: data,
+      },
+      ...messages,
+    ];
+    console.log({ history, message: messages[1].data });
+  }, [data, messages]);
+  const [messageToSend, setMessageToSend] = useState<string>("");
+
   useEffect(() => {
     // send prefetch requests for the images
     if (!isLoading && !error && data) {
@@ -42,6 +92,25 @@ export default function Chat() {
       });
     }
   }, [data, error, isLoading]);
+
+  const handleSubmission = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (messageToSend.trim() === "") return;
+    setMessages((prev) => [
+      ...prev,
+      {
+        source: ChatSource.USER,
+        type: ChatDataType.TEXT_MESSAGE,
+        data: messageToSend,
+      },
+    ]);
+    setMessageToSend("");
+    // scroll to bottom smoothly
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+
+    //TODO: Add the response from the server
+  };
 
   return (
     <div className={`min-h-full`}>
@@ -108,7 +177,7 @@ export default function Chat() {
                   index === currentItem && (
                     <div
                       key={index}
-                      id={`item${index}`}
+                      // id={`item${index}`}
                       // className="carousel-item"
                     >
                       <TopicCard
@@ -149,6 +218,56 @@ export default function Chat() {
           >
             <IconChevronRight size={16} />
           </div>
+        </div>
+      </div>
+      <div
+        className="flex flex-col gap-3 pt-6 w-full mx-auto"
+        style={{
+          maxWidth: `${MAX_W / 16}rem`,
+        }}
+      >
+        {messages.map((message, index) => (
+          <ChatMessage chatItem={message} key={index} />
+        ))}
+        <div className="h-40" />
+      </div>
+      <div
+        className="fixed bottom-0 w-full flex items-center justify-center pb-4 pt-[3.5rem] px-4"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 48%)",
+        }}
+      >
+        <div
+          className="flex items-center justify-center outline outline-[#02022734] rounded-[1.5rem] w-full focus-within:outline-[3px] focus-within:outline-[#02022766] transition-all duration-100 pl-2"
+          style={{
+            maxWidth: `${MAX_W / 16}rem`,
+          }}
+        >
+          <form
+            className="grid p-2 content-center items-center justify-center w-full gap-3"
+            style={{
+              gridTemplateColumns: "auto 1fr auto",
+            }}
+            onSubmit={handleSubmission}
+          >
+            <IconInfoSquareRounded color="#FDDE00" />
+            <input
+              name="message"
+              type="message"
+              placeholder="What is PRICE Of BONK??..."
+              className="!bg-transparent !border-none !outline-none uppercase w-full"
+              autoComplete="off"
+              value={messageToSend}
+              onChange={(e) => setMessageToSend(e.target.value)}
+            />
+            <button
+              className="!h-11 !py-0 !w-12 bg-[#020227] text-white rounded-[1.25rem]"
+              type="submit"
+            >
+              {"->"}
+            </button>
+          </form>
         </div>
       </div>
     </div>
