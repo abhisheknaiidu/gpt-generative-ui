@@ -214,45 +214,6 @@ export default function Page() {
       type: ChatDataType.TEXT_MESSAGE,
       data: "How can I help you?",
     },
-    // {
-    //   source: ChatSource.WAGMI_AI,
-    //   type: ChatDataType.DATA_LIST,
-    //   data: {
-    //     title: "Current News Highlights",
-    //     items: [
-    //       {
-    //         title: "Israel-Hamas War Updates",
-    //         description:
-    //           "Israel has conducted a rescue operation in Gaza, rescuing four hostages. However, the raid resulted in significant casualties, with Gazan officials reporting over 200 Palestinians killed. Ongoing tensions and humanitarian concerns persist.",
-    //       },
-    //       {
-    //         title: "Apollo 8 Astronaut Dies in Plane Crash",
-    //         description:
-    //           "A famed NASA astronaut from the Apollo 8 mission has tragically died in a plane crash at the age of 90. This news marks the loss of a notable figure in space exploration history.",
-    //       },
-    //       {
-    //         title: "Narendra Modi's Oath Ceremony",
-    //         description:
-    //           "Narendra Modi is set to take his oath for a third term as Prime Minister of India. The swearing-in will be attended by various prominent leaders, including Mallikarjun Kharge of the Congress party.",
-    //       },
-    //       {
-    //         title: "JEE Advanced Topper's Achievement",
-    //         description:
-    //           "Ved Lahoti, a student from the IIT Delhi zone, achieved the top score in the JEE Advanced exam with 355 out of 360 marks. He is yet to decide on his institute and branch of study.",
-    //       },
-    //       {
-    //         title: "Abortion Rights and Anti-Abortion Think Tanks",
-    //         description:
-    //           "An influential anti-abortion think tank claims that science supports their stance, adding complexity to the ongoing abortion rights debate in the United States.",
-    //       },
-    //     ],
-    //   },
-    // },
-    // {
-    //   source: ChatSource.USER,
-    //   type: ChatDataType.TEXT_MESSAGE,
-    //   data: "What is Dogecoin?",
-    // },
   ]);
 
   const [messageToSend, setMessageToSend] = useState<string>("");
