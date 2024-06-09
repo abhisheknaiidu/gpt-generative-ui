@@ -6,11 +6,15 @@ import { IconBrandGithub, IconSparkles } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
-
+import {
+  WalletDisconnectButton,
+  WalletMultiButton,
+} from "@solana/wallet-adapter-react-ui";
+import { useWallet } from "@solana/wallet-adapter-react";
 export default function Chat() {
   const router = useRouter();
   const ref = useRef<HTMLInputElement>(null);
-
+  const { publicKey } = useWallet();
   useEffect(() => {
     ref.current?.focus?.();
   }, []);
@@ -46,6 +50,8 @@ export default function Chat() {
               }}
               onSubmit={(e) => {
                 e.preventDefault();
+                if (!publicKey) return;
+
                 router.push(`/${ref.current?.value.toLowerCase().trim()}`);
               }}
             >
@@ -74,6 +80,8 @@ export default function Chat() {
           AI-driven platform. It not only provides detailed insights but also
           creates interactive UI components on-the-fly
         </div>
+        <WalletDisconnectButton />
+        <WalletMultiButton />
       </div>
       <div className="!rotate-90 fixed bottom-14 -right-4">
         <a
