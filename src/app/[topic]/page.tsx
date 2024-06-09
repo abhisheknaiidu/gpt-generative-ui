@@ -1,8 +1,10 @@
 "use client";
+import FallbackIcon from "@/assets/FallbackIcon.svg";
 import LoadingGIF from "@/assets/loading.gif";
+import ImageWithFallback from "@/components/helpers/ImageWithFallback";
 import TopicCard from "@/components/TopicCards/TopicCards";
 import { useHashState } from "@/hooks/useHashState";
-import { fetcher } from "@/utils/swr-fetcher";
+import { fetcher, genericMutationFetcher } from "@/utils/swr-fetcher";
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -14,28 +16,174 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import Markdown from "react-markdown";
 import useSWR from "swr";
-import { ChatDataType, ChatItem, ChatSource } from "../types/chat";
+import useSWRMutation from "swr/mutation";
+import {
+  AssetPrice,
+  CHATCoinListData,
+  CHATCoinPriceData,
+  CHATDataListData,
+  ChatDataType,
+  ChatItem,
+  ChatSource,
+} from "../types/chat";
 
 const MAX_W = 500;
 
+const ChatAssetPrice = ({ asset }: { asset: AssetPrice }) => {
+  return (
+    <div className=" flex items-center justify-between transition-all duration-200 hover:scale-[1.01] rounded-full cursor-pointer">
+      <div className="flex items-center gap-3">
+        {/* <div className="w-8 h-8 bg-gray-500 rounded-full" /> */}
+        <ImageWithFallback
+          src={asset.icon && asset.icon !== "null" ? asset.icon : FallbackIcon}
+          alt={asset.name}
+          width={44}
+          height={44}
+          className="rounded-full"
+          fallbackSrc={FallbackIcon}
+        />
+        <div className="flex flex-col">
+          <h4 className="text-sm uppercase font-semibold text-gray-700">
+            {asset.name}
+          </h4>
+          <p className="text-xs text-gray-500">{asset.price}</p>
+        </div>
+      </div>
+      <div className="flex flex-col">
+        <p className={"text-sm ml-auto text-gray-500"}>
+          {asset.oneDayChange > 0 ? "+" : ""}
+          {(asset.oneDayChange * asset.price).toLocaleString(
+            undefined, // leave undefined to use the visitor's browser
+            // locale or a string like 'en-US' to override it.
+            { minimumFractionDigits: 2 }
+          )}
+        </p>
+        <p
+          className={classNames("text-xs ml-auto", {
+            "text-green-500": asset.oneDayChange > 0,
+            "text-red-500": asset.oneDayChange < 0,
+          })}
+        >
+          {Math.abs(asset.oneDayChange)}%
+        </p>
+      </div>
+    </div>
+  );
+};
+
 const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
   const { source, type, data } = chatItem;
-  if (type === ChatDataType.TEXT_MESSAGE)
+
+  if (type === ChatDataType.DATA_LIST) {
     return (
-      <div
-        className={classNames("p-2.5 px-4 rounded-lg max-w-[80%]", {
-          "bg-[#FDDE00] text-gray-700 self-end border border-gray-500 rounded-tr-none":
-            source === ChatSource.USER,
-          "bg-transparent text-gray-500 border-gray-500 border self-start rounded-tl-none":
-            source === ChatSource.WAGMI_AI,
-        })}
+      <motion.div
+        initial={{
+          opacity: 0,
+          scale: 1,
+          translateX: source === ChatSource.USER ? 10 : -10,
+        }}
+        animate={{ opacity: 1, scale: 1, translateX: 0 }}
+        className="flex flex-col gap-3 p-3 rounded-lg max-w-[90%] bg-black bg-opacity-5 text-gray-500 border-gray-500 border self-start rounded-tl-none"
+      >
+        <h3 className="text-lg font-bold text-gray-700">
+          {(data as CHATDataListData).title}
+        </h3>
+        <div className="flex flex-col gap-3">
+          {(data as CHATDataListData).items.map((item, index) => (
+            <div
+              key={index}
+              className="bg-white flex flex-col p-4 gap-3 rounded-lg transition-all duration-200 hover:shadow-2xl hover:bg-opacity-90"
+            >
+              <h4 className="font-bold text-gray-600">{item.title}</h4>
+              <p className="text-sm text-gray-500">{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (type === ChatDataType.COINS_LIST) {
+    return (
+      <motion.div
+        initial={{
+          opacity: 0,
+          scale: 1,
+          translateX: source === ChatSource.USER ? 10 : -10,
+        }}
+        animate={{ opacity: 1, scale: 1, translateX: 0 }}
+        className="flex flex-col gap-3 p-5 rounded-lg w-[80%] bg-transparent text-gray-500 border-gray-300 border self-start rounded-tl-none"
+      >
+        <h3 className="text-lg font-bold text-gray-700 mr-10">
+          {(data as CHATCoinListData).title}
+        </h3>
+        <div className="flex flex-col gap-3">
+          {(data as CHATCoinListData).items.map((item, index) => (
+            <>
+              <div
+                className="bg-black bg-opacity-10 h-[1px] w-full"
+                key={index * 2}
+              />
+              <ChatAssetPrice asset={item} key={index * 2 + 1} />
+            </>
+          ))}
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (type === ChatDataType.COIN_PRICE) {
+    return (
+      <motion.div
+        initial={{
+          opacity: 0,
+          scale: 1,
+          translateX: source === ChatSource.USER ? 10 : -10,
+        }}
+        animate={{ opacity: 1, scale: 1, translateX: 0 }}
+        className="flex flex-col gap-3 p-5 rounded-lg w-[80%] bg-transparent text-gray-500 border-gray-300 border self-start rounded-tl-none"
+      >
+        <h3 className="text-lg font-bold text-gray-700 mr-10">
+          {(data as CHATCoinPriceData).title}
+        </h3>
+        <div className="flex flex-col gap-3">
+          <div className="bg-black bg-opacity-10 h-[1px] w-full" />
+          <ChatAssetPrice asset={(data as CHATCoinPriceData).asset} />
+        </div>
+      </motion.div>
+    );
+  }
+
+  // ChatDataType.TEXT_MESSAGE or any other type
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        scale: 1,
+        translateX: source === ChatSource.USER ? 10 : -10,
+      }}
+      animate={{ opacity: 1, scale: 1, translateX: 0 }}
+      className={classNames("p-2.5 px-4 rounded-lg max-w-[95%]", {
+        "bg-[#FDDE00] self-end border border-gray-300 rounded-tr-none":
+          source === ChatSource.USER,
+        "bg-transparent border-gray-300 border self-start rounded-tl-none":
+          source === ChatSource.WAGMI_AI,
+      })}
+    >
+      <Markdown
+        components={{
+          span: ({ node, ...props }) => (
+            <span className="text-gray-600" {...props} />
+          ),
+          p: ({ node, ...props }) => <p className="text-gray-600" {...props} />,
+        }}
       >
         {data}
-      </div>
-    );
-
-  return null;
+      </Markdown>
+    </motion.div>
+  );
 };
 
 export default function Page() {
@@ -55,6 +203,10 @@ export default function Page() {
       revalidateOnReconnect: false,
     }
   );
+  const { trigger, isMutating } = useSWRMutation(
+    "/api/discuss",
+    genericMutationFetcher
+  );
 
   const [messages, setMessages] = useState<ChatItem[]>([
     {
@@ -62,24 +214,47 @@ export default function Page() {
       type: ChatDataType.TEXT_MESSAGE,
       data: "How can I help you?",
     },
-    {
-      source: ChatSource.USER,
-      type: ChatDataType.TEXT_MESSAGE,
-      data: "What is Dogecoin?",
-    },
+    // {
+    //   source: ChatSource.WAGMI_AI,
+    //   type: ChatDataType.DATA_LIST,
+    //   data: {
+    //     title: "Current News Highlights",
+    //     items: [
+    //       {
+    //         title: "Israel-Hamas War Updates",
+    //         description:
+    //           "Israel has conducted a rescue operation in Gaza, rescuing four hostages. However, the raid resulted in significant casualties, with Gazan officials reporting over 200 Palestinians killed. Ongoing tensions and humanitarian concerns persist.",
+    //       },
+    //       {
+    //         title: "Apollo 8 Astronaut Dies in Plane Crash",
+    //         description:
+    //           "A famed NASA astronaut from the Apollo 8 mission has tragically died in a plane crash at the age of 90. This news marks the loss of a notable figure in space exploration history.",
+    //       },
+    //       {
+    //         title: "Narendra Modi's Oath Ceremony",
+    //         description:
+    //           "Narendra Modi is set to take his oath for a third term as Prime Minister of India. The swearing-in will be attended by various prominent leaders, including Mallikarjun Kharge of the Congress party.",
+    //       },
+    //       {
+    //         title: "JEE Advanced Topper's Achievement",
+    //         description:
+    //           "Ved Lahoti, a student from the IIT Delhi zone, achieved the top score in the JEE Advanced exam with 355 out of 360 marks. He is yet to decide on his institute and branch of study.",
+    //       },
+    //       {
+    //         title: "Abortion Rights and Anti-Abortion Think Tanks",
+    //         description:
+    //           "An influential anti-abortion think tank claims that science supports their stance, adding complexity to the ongoing abortion rights debate in the United States.",
+    //       },
+    //     ],
+    //   },
+    // },
+    // {
+    //   source: ChatSource.USER,
+    //   type: ChatDataType.TEXT_MESSAGE,
+    //   data: "What is Dogecoin?",
+    // },
   ]);
 
-  useEffect(() => {
-    const history = [
-      {
-        source: ChatSource.WAGMI_AI,
-        type: ChatDataType.TOPIC_CAROUSEL,
-        data: data,
-      },
-      ...messages,
-    ];
-    console.log({ history, message: messages[1].data });
-  }, [data, messages]);
   const [messageToSend, setMessageToSend] = useState<string>("");
 
   useEffect(() => {
@@ -93,8 +268,9 @@ export default function Page() {
     }
   }, [data, error, isLoading]);
 
-  const handleSubmission = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmission = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isMutating || isLoading || messageToSend.trim() === "") return;
 
     if (messageToSend.trim() === "") return;
     setMessages((prev) => [
@@ -106,11 +282,27 @@ export default function Page() {
       },
     ]);
     setMessageToSend("");
-    // scroll to bottom smoothly
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
 
-    //TODO: Add the response from the server
+    // API call to get the response
+    const response = await trigger({
+      type: "post",
+      rest: {
+        body: JSON.stringify({
+          history: messages,
+          message: messageToSend,
+        }),
+      },
+    });
+
+    console.log("RESPONSE: ", response);
+    setMessages((prev) => [...prev, response]);
   };
+
+  useEffect(() => {
+    // scroll to bottom smoothly
+    if (messages.length > 1)
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" });
+  }, [messages, isMutating]);
 
   return (
     <div className={`min-h-full`}>
@@ -156,7 +348,7 @@ export default function Page() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
-                className="animate-pulse rounded-3xl bg-white"
+                className="animate-pulse rounded-3xl bg-white relative flex items-center justify-center"
                 style={{
                   height: `${MAX_W / 16}rem`,
                   width: `${MAX_W / 16}rem`,
@@ -170,6 +362,7 @@ export default function Page() {
                   alt="Loading..."
                   className="rounded-3xl opacity-50"
                 />
+                <span className="absolute loading loading-ring w-20"></span>
               </motion.div>
             ) : (
               data.map(
@@ -229,6 +422,15 @@ export default function Page() {
         {messages.map((message, index) => (
           <ChatMessage chatItem={message} key={index} />
         ))}
+        {isMutating && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="loading loading-dots loading-sm mt-10" />
+          </motion.div>
+        )}
         <div className="h-40" />
       </div>
       <div
@@ -262,8 +464,14 @@ export default function Page() {
               onChange={(e) => setMessageToSend(e.target.value)}
             />
             <button
-              className="!h-11 !py-0 !w-12 bg-[#020227] text-white rounded-[1.25rem]"
+              className={classNames(
+                "h-11 py-0 w-12 bg-[#020227] text-white rounded-[1.25rem]",
+                {
+                  "loading loading-ring loading-xl": isMutating,
+                }
+              )}
               type="submit"
+              disabled={isMutating || isLoading}
             >
               {"->"}
             </button>
