@@ -28,15 +28,15 @@ export default function Chat() {
         }}
       />
       <div className="min-h-[100dvh] flex flex-col justify-center items-center py-20 gap-10">
-        <div className="flex flex-col gap-5 items-center my-auto">
+        <div className="flex flex-col gap-8 items-center my-auto">
           <div className="py-2 px-4 flex gap-4 bg-[#020227] bg-opacity-5 rounded-full">
-            <div>MORE THAN JUST FAQ</div>
+            <div>POWERED BY BONK</div>
             <Image src={bonk} alt="Bonk" height={24} />
           </div>
-          <h1 className="in-s text-7xl text-center uppercase leading-tight">
-            Dive Deep into
+          <h1 className="in-s text-5xl text-center uppercase leading-tight">
+            Engage with <strong>Intuitive AI</strong>
             <br />
-            ANYTHING
+            and <strong>Generative UI</strong>
           </h1>
           <div className="flex items-center justify-center outline outline-[#ADAA9E] border-opacity-30 p-1.5 rounded-[1.7rem] w-full max-w-[35rem] mt-4 focus-within:outline-[2px] transition-all duration-100">
             <form
@@ -68,10 +68,11 @@ export default function Chat() {
             </form>
           </div>
         </div>
-        <div className="in-s uppercase max-w-[28rem] text-center text-sm opacity-80">
-          Dive into the fascinating world of BONK Coin with decks crafted by AI
-          to cater to your interests. Our platform empowers everyone to learn
-          and grow together
+        <div className="in-s uppercase max-w-[36rem] text-center text-sm opacity-80">
+          Discover a smarter way to learn and find information with our
+          AI-driven platform. It not only provides detailed insights but also
+          creates interactive UI components on-the-fly, enhancing your browsing
+          experience
         </div>
       </div>
       <div className="!rotate-90 fixed bottom-14 -right-4">
