@@ -29,7 +29,7 @@ import {
   ChatSource,
 } from "../types/chat";
 
-const MAX_W = 500;
+const MAX_W = 550;
 
 const ChatAssetPrice = ({ asset }: { asset: AssetPrice }) => {
   return (
@@ -262,7 +262,7 @@ export default function Page() {
   useEffect(() => {
     // scroll to bottom smoothly
     if (messages.length > 1)
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" });
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   }, [messages, isMutating]);
 
   return (
