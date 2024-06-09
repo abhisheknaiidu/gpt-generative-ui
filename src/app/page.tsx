@@ -53,7 +53,8 @@ export default function Chat() {
               <input
                 name="topic"
                 type="topic"
-                placeholder="WHAT IS DOGE COIN..."
+                defaultValue="WHAT IS BONK COIN"
+                placeholder="WHAT IS SOLANA..."
                 className="!bg-transparent !border-none !outline-none uppercase"
                 ref={ref}
                 autoComplete="off"
