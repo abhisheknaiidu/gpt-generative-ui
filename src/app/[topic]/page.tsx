@@ -1,84 +1,269 @@
 "use client";
-
+import FallbackIcon from "@/assets/FallbackIcon.svg";
+import LoadingGIF from "@/assets/loading.gif";
+import ImageWithFallback from "@/components/helpers/ImageWithFallback";
 import TopicCard from "@/components/TopicCards/TopicCards";
 import { useHashState } from "@/hooks/useHashState";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { fetcher, genericMutationFetcher } from "@/utils/swr-fetcher";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconInfoSquareRounded,
+} from "@tabler/icons-react";
 import classNames from "classnames";
+import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
+import Markdown from "react-markdown";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
+import {
+  AssetPrice,
+  CHATCoinListData,
+  CHATCoinPriceData,
+  CHATDataListData,
+  ChatDataType,
+  ChatItem,
+  ChatSource,
+} from "../types/chat";
 
-const MAX_W = 500;
+const MAX_W = 550;
 
-export default function Chat() {
-  const title = "How Bonk Works?";
+const ChatAssetPrice = ({ asset }: { asset: AssetPrice }) => {
+  return (
+    <div className=" flex items-center justify-between transition-all duration-200 hover:scale-[1.01] rounded-full cursor-pointer">
+      <div className="flex items-center gap-3">
+        {/* <div className="w-8 h-8 bg-gray-500 rounded-full" /> */}
+        <ImageWithFallback
+          src={asset.icon && asset.icon !== "null" ? asset.icon : FallbackIcon}
+          alt={asset.name}
+          width={44}
+          height={44}
+          className="rounded-full"
+          fallbackSrc={FallbackIcon}
+        />
+        <div className="flex flex-col">
+          <h4 className="text-sm uppercase font-semibold text-gray-700">
+            {asset.name}
+          </h4>
+          <p className="text-xs text-gray-500">{asset.price}</p>
+        </div>
+      </div>
+      <div className="flex flex-col">
+        <p className={"text-sm ml-auto text-gray-500"}>
+          {asset.oneDayChange > 0 ? "+" : ""}
+          {(asset.oneDayChange * asset.price).toLocaleString(
+            undefined, // leave undefined to use the visitor's browser
+            // locale or a string like 'en-US' to override it.
+            { minimumFractionDigits: 2 }
+          )}
+        </p>
+        <p
+          className={classNames("text-xs ml-auto", {
+            "text-green-500": asset.oneDayChange > 0,
+            "text-red-500": asset.oneDayChange < 0,
+          })}
+        >
+          {Math.abs(asset.oneDayChange)}%
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
+  const { source, type, data } = chatItem;
+
+  if (type === ChatDataType.DATA_LIST) {
+    return (
+      <motion.div
+        initial={{
+          opacity: 0,
+          scale: 1,
+          translateX: source === ChatSource.USER ? 10 : -10,
+        }}
+        animate={{ opacity: 1, scale: 1, translateX: 0 }}
+        className="flex flex-col gap-3 p-3 rounded-lg max-w-[90%] bg-black bg-opacity-5 text-gray-500 border-gray-500 border self-start rounded-tl-none"
+      >
+        <h3 className="text-lg font-bold text-gray-700">
+          {(data as CHATDataListData).title}
+        </h3>
+        <div className="flex flex-col gap-3">
+          {(data as CHATDataListData).items.map((item, index) => (
+            <div
+              key={index}
+              className="bg-white flex flex-col p-4 gap-3 rounded-lg transition-all duration-200 hover:shadow-2xl hover:bg-opacity-90"
+            >
+              <h4 className="font-bold text-gray-600">{item.title}</h4>
+              <p className="text-sm text-gray-500">{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (type === ChatDataType.COINS_LIST) {
+    return (
+      <motion.div
+        initial={{
+          opacity: 0,
+          scale: 1,
+          translateX: source === ChatSource.USER ? 10 : -10,
+        }}
+        animate={{ opacity: 1, scale: 1, translateX: 0 }}
+        className="flex flex-col gap-3 p-5 rounded-lg w-[80%] bg-transparent text-gray-500 border-gray-300 border self-start rounded-tl-none"
+      >
+        <h3 className="text-lg font-bold text-gray-700 mr-10">
+          {(data as CHATCoinListData).title}
+        </h3>
+        <div className="flex flex-col gap-3">
+          {(data as CHATCoinListData).items.map((item, index) => (
+            <>
+              <div
+                className="bg-black bg-opacity-10 h-[1px] w-full"
+                key={index * 2}
+              />
+              <ChatAssetPrice asset={item} key={index * 2 + 1} />
+            </>
+          ))}
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (type === ChatDataType.COIN_PRICE) {
+    return (
+      <motion.div
+        initial={{
+          opacity: 0,
+          scale: 1,
+          translateX: source === ChatSource.USER ? 10 : -10,
+        }}
+        animate={{ opacity: 1, scale: 1, translateX: 0 }}
+        className="flex flex-col gap-3 p-5 rounded-lg w-[80%] bg-transparent text-gray-500 border-gray-300 border self-start rounded-tl-none"
+      >
+        <h3 className="text-lg font-bold text-gray-700 mr-10">
+          {(data as CHATCoinPriceData).title}
+        </h3>
+        <div className="flex flex-col gap-3">
+          <div className="bg-black bg-opacity-10 h-[1px] w-full" />
+          <ChatAssetPrice asset={(data as CHATCoinPriceData).asset} />
+        </div>
+      </motion.div>
+    );
+  }
+
+  // ChatDataType.TEXT_MESSAGE or any other type
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        scale: 1,
+        translateX: source === ChatSource.USER ? 10 : -10,
+      }}
+      animate={{ opacity: 1, scale: 1, translateX: 0 }}
+      className={classNames("p-2.5 px-4 rounded-lg max-w-[95%]", {
+        "bg-[#FDDE00] self-end border border-gray-300 rounded-tr-none":
+          source === ChatSource.USER,
+        "bg-transparent border-gray-300 border self-start rounded-tl-none":
+          source === ChatSource.WAGMI_AI,
+      })}
+    >
+      <Markdown
+        components={{
+          span: ({ node, ...props }) => (
+            <span className="text-gray-600" {...props} />
+          ),
+          p: ({ node, ...props }) => <p className="text-gray-600" {...props} />,
+        }}
+      >
+        {data}
+      </Markdown>
+    </motion.div>
+  );
+};
+
+export default function Page() {
+  const params = useParams();
+  const topic = params.topic;
+
+  const title = decodeURIComponent(topic.toString());
   const [hash, setHash] = useHashState();
   const currentItem = parseInt(hash.split("item")[1] || "0");
-  const data = [
+
+  const { data, error, isLoading } = useSWR(
+    "/api/generate?topic=" + topic,
+    fetcher,
     {
-      title: "What is Bonk Coin?",
-      description: [
-        "Bonk Coin, also known as BONK, is a dog-themed meme coin built on the Solana blockchain.",
-        "It was introduced as a free airdrop to the Solana community on Christmas day 2022.",
-        "Inspired by popular memecoins like Dogecoin (DOGE), BONK's mascot is a Shiba Inu dog.",
-        "Despite having no specific utility initially, BONK has been integrated into more than 110 DeFi, gaming, and other sectors.",
-        "Its rapid popularity highlights the community-driven nature of meme coins.",
-      ],
-      imageGenerationPrompt:
-        "An illustration of a Shiba Inu dog in a festive setting, with 'BONK' written across the scene on a blockchain background.",
-      imageDimensions: "1024x1024",
-    },
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+  const { trigger, isMutating } = useSWRMutation(
+    "/api/discuss",
+    genericMutationFetcher
+  );
+
+  const [messages, setMessages] = useState<ChatItem[]>([
     {
-      title: "BONK Tokenomics",
-      description: [
-        "BONK Tokenomics deals with the supply, distribution, and demand of the cryptocurrency.",
-        "The project airdropped 50% of its total supply to Solana NFT enthusiasts, DeFi traders, artists, and collectors.",
-        "This method of distribution was aimed at reversing the trend of predatory VC tokens on the Solana network.",
-        "BONK's supply dynamics helped in garnering a strong and diverse community backing.",
-        "Understanding BONK's tokenomics is crucial for anyone looking to invest.",
-      ],
-      imageGenerationPrompt:
-        "A pie chart showing the distribution of BONK tokens along with icons of NFTs, traders, artists, and collectors.",
-      imageDimensions: "1792x1024",
+      source: ChatSource.WAGMI_AI,
+      type: ChatDataType.TEXT_MESSAGE,
+      data: "How can I help you?",
     },
-    {
-      title: "How to Buy BONK",
-      description: [
-        "BONK can be purchased on multiple major cryptocurrency exchanges including Coinbase, Binance, OKX, and Gate.io.",
-        "It's crucial to have a secure wallet compatible with the Solana blockchain for storing BONK.",
-        "Prospective buyers should be cautious of scams while claiming BONK airdrops or purchasing from unofficial sources.",
-        "Research and verification of the exchange's legitimacy are essential before trading BONK.",
-        "Users can also engage in staking BONK to earn yields on various DeFi platforms.",
-      ],
-      imageGenerationPrompt:
-        "A step-by-step infographic showing how to buy BONK on various exchanges, secure wallets, and staking methods.",
-      imageDimensions: "1024x1792",
-    },
-    {
-      title: "Unique Features of BONK",
-      description: [
-        "BONK stands out for its community-driven distribution model and extensive integrations.",
-        "Launched during a harsh crypto winter, it quickly surged over 25,000% in value.",
-        "BONK offers single-sided staking pools, allowing holders to earn yields without involving a second asset.",
-        "Its listing on major exchanges like Coinbase and Binance significantly boosted its legitimacy.",
-        "BONK offers derivatives trading on platforms like Bitmex, allowing trades with up to 10x leverage.",
-      ],
-      imageGenerationPrompt:
-        "An illustration showing BONK’s unique features: community distribution, staking pools, exchange listings, and derivatives trading.",
-      imageDimensions: "512x512",
-    },
-    {
-      title: "Future Prospects of BONK",
-      description: [
-        "The future of BONK seems promising, leveraged by its strong community support and integration with DeFi and gaming sectors.",
-        "Continuous development and new integrations can further enhance its utility and appeal.",
-        "The project aims to be recognized as the 'community coin of Solana,' used across decentralized apps.",
-        "Market adoption and legitimacy increase with each new major exchange listing.",
-        "As with any investment, potential investors should keep an eye on technological and market risks.",
-      ],
-      imageGenerationPrompt:
-        "A futuristic representation of the Solana blockchain integrated with various sectors like DeFi, gaming, and decentralized apps, all revolving around BONK.",
-      imageDimensions: "1024x1024",
-    },
-  ];
+  ]);
+
+  const [messageToSend, setMessageToSend] = useState<string>("");
+
+  useEffect(() => {
+    // send prefetch requests for the images
+    if (!isLoading && !error && data) {
+      data.forEach((item: any, index: number) => {
+        fetch(
+          `/api/image?prompt=${item.imageGenerationPrompt}&size=${item.imageDimensions}`
+        );
+      });
+    }
+  }, [data, error, isLoading]);
+
+  const handleSubmission = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isMutating || isLoading || messageToSend.trim() === "") return;
+
+    if (messageToSend.trim() === "") return;
+    setMessages((prev) => [
+      ...prev,
+      {
+        source: ChatSource.USER,
+        type: ChatDataType.TEXT_MESSAGE,
+        data: messageToSend,
+      },
+    ]);
+    setMessageToSend("");
+
+    // API call to get the response
+    const response = await trigger({
+      type: "post",
+      rest: {
+        body: JSON.stringify({
+          history: messages,
+          message: messageToSend,
+        }),
+      },
+    });
+
+    console.log("RESPONSE: ", response);
+    setMessages((prev) => [...prev, response]);
+  };
+
+  useEffect(() => {
+    // scroll to bottom smoothly
+    if (messages.length > 1)
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }, [messages, isMutating]);
 
   return (
     <div className={`min-h-full`}>
@@ -113,41 +298,72 @@ export default function Chat() {
             <IconChevronLeft size={16} />
           </div>
           <div
-            className="carousel flex gap-4"
+            // className="carousel flex gap-4"
+            className="flex gap-4"
             style={{
-              maxWidth: `${MAX_W / 16}rem`,
+              maxWidth: `${MAX_W / 16}rem overflow-hidden`,
             }}
           >
-            {data.map((item, index) => (
-              <div key={index} id={`item${index}`} className="carousel-item">
-                <TopicCard
-                  cardType={item.imageDimensions}
-                  cardIndex={index}
-                  cardProps={{
-                    title: item.title,
-                    description: item.description,
-                    // image:
-                    //   "https://oaidalleapiprodscus.blob.core.windows.net/private/org-VtjMqVcJ39WS0ytH0Qr3sqxF/user-OyCviQyV6tSxjLBAdKWc2RQ8/img-ChDiS3IAPMBRJeUYErtjjYxY.png?st=2024-05-31T22%3A57%3A52Z&se=2024-06-01T00%3A57%3A52Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-31T23%3A49%3A30Z&ske=2024-06-01T23%3A49%3A30Z&sks=b&skv=2023-11-03&sig=gQWvw8C0BKe7kXdL173T9cOSTtojtqLxm6f4kexmRWI%3D",
-                    image: {
-                      prompt: item.imageGenerationPrompt,
-                      size: item.imageDimensions,
-                    },
-                    size: MAX_W,
-                  }}
+            {isLoading || error || !data ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="animate-pulse rounded-3xl bg-white relative flex items-center justify-center"
+                style={{
+                  height: `${MAX_W / 16}rem`,
+                  width: `${MAX_W / 16}rem`,
+                  mixBlendMode: "overlay",
+                }}
+              >
+                <Image
+                  height={MAX_W}
+                  width={MAX_W}
+                  src={LoadingGIF}
+                  alt="Loading..."
+                  className="rounded-3xl opacity-50"
                 />
-              </div>
-            ))}
+                <span className="absolute loading loading-ring w-20"></span>
+              </motion.div>
+            ) : (
+              data.map(
+                (item: any, index: number) =>
+                  index === currentItem && (
+                    <div
+                      key={index}
+                      // id={`item${index}`}
+                      // className="carousel-item"
+                    >
+                      <TopicCard
+                        cardType={item.imageDimensions}
+                        cardIndex={index}
+                        cardProps={{
+                          title: item.title,
+                          description: item.description,
+                          // image:
+                          //   "https://oaidalleapiprodscus.blob.core.windows.net/private/org-VtjMqVcJ39WS0ytH0Qr3sqxF/user-OyCviQyV6tSxjLBAdKWc2RQ8/img-ChDiS3IAPMBRJeUYErtjjYxY.png?st=2024-05-31T22%3A57%3A52Z&se=2024-06-01T00%3A57%3A52Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-31T23%3A49%3A30Z&ske=2024-06-01T23%3A49%3A30Z&sks=b&skv=2023-11-03&sig=gQWvw8C0BKe7kXdL173T9cOSTtojtqLxm6f4kexmRWI%3D",
+                          image: {
+                            prompt: item.imageGenerationPrompt,
+                            size: item.imageDimensions,
+                          },
+                          size: MAX_W,
+                        }}
+                      />
+                    </div>
+                  )
+              )
+            )}
           </div>
           <div
             className={classNames(
               "btn btn-xs !bg-white bg-opacity-70 outline-none border-none px-4 py-1.5 !h-fit",
               {
                 "opacity-50 cursor-not-allowed":
-                  currentItem === data.length - 1,
+                  !data || currentItem === data.length - 1,
               }
             )}
-            aria-disabled={currentItem === data.length - 1}
-            tabIndex={currentItem === data.length - 1 ? -1 : undefined}
+            aria-disabled={!data || currentItem === data.length - 1}
+            tabIndex={!data || currentItem === data.length - 1 ? -1 : undefined}
             onClick={(e) => {
               e.preventDefault();
               if (currentItem === data.length - 1) return;
@@ -156,6 +372,71 @@ export default function Chat() {
           >
             <IconChevronRight size={16} />
           </div>
+        </div>
+      </div>
+      <div
+        className="flex flex-col gap-3 pt-6 w-full mx-auto"
+        style={{
+          maxWidth: `${MAX_W / 16}rem`,
+        }}
+      >
+        {messages.map((message, index) => (
+          <ChatMessage chatItem={message} key={index} />
+        ))}
+        {isMutating && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="loading loading-dots loading-sm mt-10" />
+          </motion.div>
+        )}
+        <div className="h-40" />
+      </div>
+      <div
+        className="fixed bottom-0 w-full flex items-center justify-center pb-4 pt-[3.5rem] px-4"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 48%)",
+        }}
+      >
+        <div
+          className="flex items-center justify-center outline outline-[#02022734] rounded-[1.5rem] w-full focus-within:outline-[3px] focus-within:outline-[#02022766] transition-all duration-100 pl-2"
+          style={{
+            maxWidth: `${MAX_W / 16}rem`,
+          }}
+        >
+          <form
+            className="grid p-2 content-center items-center justify-center w-full gap-3"
+            style={{
+              gridTemplateColumns: "auto 1fr auto",
+            }}
+            onSubmit={handleSubmission}
+          >
+            <IconInfoSquareRounded color="#FDDE00" />
+            <input
+              name="message"
+              type="message"
+              placeholder="What is PRICE Of BONK??..."
+              className="!bg-transparent !border-none !outline-none uppercase w-full"
+              autoComplete="off"
+              value={messageToSend}
+              onChange={(e) => setMessageToSend(e.target.value)}
+            />
+            <button
+              className={classNames(
+                "h-11 py-0 w-12 bg-[#020227] text-white rounded-[1.25rem]",
+                {
+                  "loading loading-ring loading-xl": isMutating,
+                }
+              )}
+              type="submit"
+              disabled={isMutating || isLoading}
+            >
+              {"->"}
+            </button>
+          </form>
         </div>
       </div>
     </div>

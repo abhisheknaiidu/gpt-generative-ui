@@ -22,24 +22,32 @@ const Header = () => {
   return (
     <div
       className={classNames(
-        "transition-all duration-500 bg-[#FFFFFF] mx-auto fixed h-16 flex items-center justify-between w-full",
-        {
-          "rounded-[2rem] max-w-[38rem] backdrop-blur-lg top-7 left-[50%] -translate-x-1/2 px-3 bg-opacity-50":
-            isHome,
-          "rounded-[0rem] max-w-[100vw] backdrop-blur-xl top-0 left-0 bg-opacity-70":
-            !isHome,
-        }
+        "z-40 transition-all duration-500 fixed top-0 left-0 w-full items-center justify-center",
+        {}
       )}
       style={{
-        boxShadow: "0px 4px 36.8px 0px rgba(0, 0, 0, 0.05)",
-        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-        padding: !isHome ? "0 max(calc(50vw - 18rem), 1rem)" : undefined,
+        padding: isHome ? "1rem max(calc(50vw - 18rem), 1rem) 0" : undefined,
       }}
     >
-      <Link href="/">
-        <Image src={Logo} alt="Wagmi.info" height={36} />
-      </Link>
-      <button className="btn">CONNECT</button>
+      <div
+        className={classNames(
+          "transition-all duration-500 bg-[#FFFFFF] h-16 flex items-center justify-between",
+          {
+            "rounded-[2rem] backdrop-blur-lg px-3 bg-opacity-50": isHome,
+            "rounded-[0rem] backdrop-blur-xl bg-opacity-70": !isHome,
+          }
+        )}
+        style={{
+          boxShadow: "0px 4px 36.8px 0px rgba(0, 0, 0, 0.05)",
+          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+          padding: !isHome ? "0 max(calc(50vw - 18rem), 1rem)" : undefined,
+        }}
+      >
+        <Link href="/">
+          <Image src={Logo} alt="Wagmi.quest" height={36} />
+        </Link>
+        <button className="btn">CONNECT</button>
+      </div>
     </div>
   );
 };

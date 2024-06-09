@@ -3,16 +3,12 @@ import { Readability } from "@mozilla/readability";
 import * as cheerio from "cheerio";
 import { JSDOM } from "jsdom";
 
-type Data = {
-  sources: Source[];
-};
-
 type Source = {
   url: string;
   text: string;
 };
 
-export enum OpenAIModel {
+enum OpenAIModel {
   DAVINCI_TURBO = "gpt-4-turbo",
 }
 
