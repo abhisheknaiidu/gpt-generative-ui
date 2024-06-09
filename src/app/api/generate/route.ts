@@ -1,6 +1,7 @@
 import { InternetSource } from "@/app/types/sources";
 import { queryAssistantV1 } from "@/services/ai";
 import { getTopicSources } from "@/services/search";
+import { getInitializedUser } from "@/services/users";
 import { OPENAI_ASSISTANTS } from "@/utils/constants";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,9 +14,26 @@ type CarouselItem = {
 
 export async function GET(req: NextRequest) {
   try {
+    // TODO: get user's address from headers
+    // const userAddress = "0x1234567890abcdef1234567890abcdef12345678";
+    // const userData = await getInitializedUser(userAddress);
+    // if (userData.credits < 1) {
+    //   return NextResponse.json(
+    //     {
+    //       error:
+    //         "Insufficient credits. Please purchase more credits to continue.",
+    //     },
+    //     { status: 402 }
+    //   );
+    // }
     const topic = req.nextUrl.searchParams.get("topic");
     if (!topic) {
-      return NextResponse.json({ sources: [] }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: "Missing topic parameter in query string.",
+        },
+        { status: 400 }
+      );
     }
 
     const sources = await getTopicSources(topic);
