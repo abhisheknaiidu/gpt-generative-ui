@@ -44,7 +44,7 @@ const Header = () => {
         }}
       >
         <Link href="/">
-          <Image src={Logo} alt="Wagmi.quest" height={36} />
+          <Image src={Logo} alt="Wagmi.quest" height={36} priority />
         </Link>
         <button className="btn">CONNECT</button>
       </div>
