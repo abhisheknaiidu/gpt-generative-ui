@@ -55,7 +55,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(carouselData, { status: 200 });
   } catch (err) {
     console.log(err);
-    return NextResponse.json({ sources: [] }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Internal server error.",
+      },
+      { status: 500 }
+    );
   }
 }
 
