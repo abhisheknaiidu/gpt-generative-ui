@@ -195,7 +195,7 @@ export default function Page() {
   const currentItem = parseInt(hash.split("item")[1] || "0");
 
   const { data, error, isLoading } = useSWR(
-    "/api/generate?topic=" + topic,
+    ["/api/generate?topic=" + topic, "get"],
     fetcher,
     {
       revalidateIfStale: false,
@@ -203,6 +203,8 @@ export default function Page() {
       revalidateOnReconnect: false,
     }
   );
+
+  console.log({ data, error, isLoading });
   const { trigger, isMutating } = useSWRMutation(
     "/api/discuss",
     genericMutationFetcher
@@ -221,7 +223,7 @@ export default function Page() {
   useEffect(() => {
     // send prefetch requests for the images
     if (!isLoading && !error && data) {
-      data.forEach((item: any, index: number) => {
+      data.data.forEach((item: any, index: number) => {
         fetch(
           `/api/image?prompt=${item.imageGenerationPrompt}&size=${item.imageDimensions}`
         );
@@ -247,16 +249,16 @@ export default function Page() {
     // API call to get the response
     const response = await trigger({
       type: "post",
-      rest: {
-        body: JSON.stringify({
+      rest: [
+        {
           history: messages,
           message: messageToSend,
-        }),
-      },
+        },
+      ],
     });
 
     console.log("RESPONSE: ", response);
-    setMessages((prev) => [...prev, response]);
+    setMessages((prev) => [...prev, response.data]);
   };
 
   useEffect(() => {
@@ -326,7 +328,7 @@ export default function Page() {
                 <span className="absolute loading loading-ring w-20"></span>
               </motion.div>
             ) : (
-              data.map(
+              data.data.map(
                 (item: any, index: number) =>
                   index === currentItem && (
                     <div

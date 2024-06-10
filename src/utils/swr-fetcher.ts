@@ -1,4 +1,13 @@
-export const fetcher = (url: any) => fetch(url).then((res) => res.json());
+import axios from "axios";
+import { Fetcher } from "swr";
+
+export const fetcher: Fetcher<any, any> = async ([url, type, ...rest]: [
+  string,
+  "get" | "post" | "put" | "delete",
+  any[]?
+]) => {
+  return await axios[type](url, ...rest);
+};
 
 export const genericMutationFetcher = async (
   url: string,
@@ -7,11 +16,9 @@ export const genericMutationFetcher = async (
   }: {
     arg: {
       type: "get" | "post" | "put" | "delete";
-      rest?: any;
+      rest?: any[];
     };
   }
 ) => {
-  return await fetch(url, { method: arg.type, ...(arg.rest || {}) }).then(
-    (res) => res.json()
-  );
+  return await axios[arg.type](url, ...(arg.rest || []));
 };

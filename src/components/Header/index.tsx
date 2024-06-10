@@ -23,7 +23,7 @@ const Header = () => {
   return (
     <div
       className={classNames(
-        "z-40 transition-all duration-500 fixed top-0 left-0 w-full items-center justify-center",
+        "z-[400] transition-all duration-500 fixed top-0 left-0 w-full items-center justify-center",
         {}
       )}
       style={{
