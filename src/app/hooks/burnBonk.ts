@@ -52,7 +52,7 @@ export const burnBONK = async (mint: string, amount: number) => {
       burnerAccountAddress,
       new PublicKey(mint),
       burner,
-      amount
+      amount * 10 ** 4
     )
   );
   debugger;

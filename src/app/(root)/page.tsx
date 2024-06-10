@@ -12,6 +12,7 @@ import {
 } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { burnBONK } from "../hooks/burnBonk";
+import toast from "react-hot-toast";
 export default function Chat() {
   const router = useRouter();
   const ref = useRef<HTMLInputElement>(null);
@@ -24,11 +25,12 @@ export default function Chat() {
     let signature = "";
     const _signature = await burnBONK(
       "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
-      100
+      100 ** 3
     );
     if (_signature) {
       debugger;
       signature = _signature;
+      return toast.success("burned bonk successfully");
     } else return;
   };
   return (

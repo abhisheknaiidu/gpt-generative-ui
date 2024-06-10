@@ -1,9 +1,8 @@
 "use client";
 import Header from "@/components/Header";
-// import type { Metadata } from "next";
 import { Instrument_Sans, Space_Mono } from "next/font/google";
-// import "../global.css";
 import WalletContextProvider from "../components/WalletContextProvider";
+import { Toaster } from "react-hot-toast";
 
 const spaceMono = Space_Mono({ weight: ["400", "700"], subsets: ["latin"] });
 const instrumentSans = Instrument_Sans({ subsets: ["latin"] });
@@ -33,6 +32,7 @@ export default function RootLayout({
         }
       `}</style>
       <body className={spaceMono.className}>
+        <Toaster />
         <WalletContextProvider>
           {children}
           <Header />
