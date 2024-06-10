@@ -414,7 +414,12 @@ export default function Page() {
             }}
             onSubmit={handleSubmission}
           >
-            <IconInfoSquareRounded color="#FDDE00" />
+            <div
+              className="tooltip rounded-xl tooltip-secondary"
+              data-tip="Each info retrieval costs 1 credit"
+            >
+              <IconInfoSquareRounded color="#FDDE00" />
+            </div>
             <input
               name="message"
               type="message"
