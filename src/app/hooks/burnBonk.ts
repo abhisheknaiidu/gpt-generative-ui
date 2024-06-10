@@ -10,7 +10,7 @@ const connectWallet = async () => {
   const wallet = getWallet();
   if (wallet) {
     const response = await wallet.connect();
-    if (response || response.publicKey) {
+    if (response && response.publicKey) {
       toast.success("Connected to wallet");
     } else {
       toast.error("Failed to connect to wallet");

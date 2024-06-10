@@ -1,10 +1,12 @@
-import Header from "@/components/Header";
 import type { Metadata } from "next";
 import { Instrument_Sans, Space_Mono } from "next/font/google";
-import WalletContextProvider from "./components/WalletContextProvider";
 import "./globals.css";
 
-const spaceMono = Space_Mono({ weight: ["400", "700"], subsets: ["latin"] });
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-space-mono",
+});
 const instrumentSans = Instrument_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -36,7 +38,6 @@ export default function RootLayout({
 
         </WalletContextProvider> */}
         {children}
-        <Header />
       </body>
     </html>
   );

@@ -2,17 +2,14 @@
 
 import bg from "@/assets/bg.svg";
 import bonk from "@/assets/bonk.png";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { IconBrandGithub, IconSparkles } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useRef } from "react";
-import {
-  WalletDisconnectButton,
-  WalletMultiButton,
-} from "@solana/wallet-adapter-react-ui";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { burnBONK } from "../hooks/burnBonk";
+import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
+import { burnBONK } from "../hooks/burnBonk";
+
 export default function Chat() {
   const router = useRouter();
   const ref = useRef<HTMLInputElement>(null);
@@ -100,14 +97,12 @@ export default function Chat() {
           AI-driven platform. It not only provides detailed insights but also
           creates interactive UI components on-the-fly
         </div>
-        <WalletMultiButton />
       </div>
       <button
         className="fixed bottom-4 right-4 btn bg-yellow p-5"
         onClick={handleBonkBurn}
       >
-        {" "}
-        burn bonk{" "}
+        burn bonk
       </button>
       <div className="!rotate-90 fixed bottom-14 -right-4">
         <a

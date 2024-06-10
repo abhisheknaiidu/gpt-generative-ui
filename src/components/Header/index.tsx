@@ -1,6 +1,7 @@
 "use client";
 
 import Logo from "@/assets/logo.svg";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,7 +34,7 @@ const Header = () => {
         className={classNames(
           "transition-all duration-500 bg-[#FFFFFF] h-16 flex items-center justify-between",
           {
-            "rounded-[2rem] backdrop-blur-lg px-3 bg-opacity-50": isHome,
+            "rounded-[2rem] backdrop-blur-lg px-3 bg-opacity-70": isHome,
             "rounded-[0rem] backdrop-blur-xl bg-opacity-70": !isHome,
           }
         )}
@@ -46,7 +47,17 @@ const Header = () => {
         <Link href="/">
           <Image src={Logo} alt="Wagmi.quest" height={36} priority />
         </Link>
-        <button className="btn">CONNECT</button>
+
+        <WalletMultiButton
+          style={{
+            borderRadius: "2rem",
+            fontFamily: "var(--font-space-mono)",
+            fontSize: "0.9rem",
+            backgroundColor: "black",
+            fontWeight: 400,
+            textTransform: "uppercase",
+          }}
+        />
       </div>
     </div>
   );
