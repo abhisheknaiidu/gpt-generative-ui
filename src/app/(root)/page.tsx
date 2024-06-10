@@ -5,12 +5,13 @@ import bonk from "@/assets/bonk.png";
 import { IconBrandGithub, IconSparkles } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { FormEvent, useEffect, useRef } from "react";
 import {
   WalletDisconnectButton,
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { burnBONK } from "../hooks/burnBonk";
 export default function Chat() {
   const router = useRouter();
   const ref = useRef<HTMLInputElement>(null);
@@ -19,6 +20,17 @@ export default function Chat() {
     ref.current?.focus?.();
   }, []);
 
+  const handleBonkBurn = async () => {
+    let signature = "";
+    const _signature = await burnBONK(
+      "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
+      100
+    );
+    if (_signature) {
+      debugger;
+      signature = _signature;
+    } else return;
+  };
   return (
     <>
       <Image
@@ -52,7 +64,13 @@ export default function Chat() {
                 e.preventDefault();
                 if (!publicKey) return;
 
-                router.push(`/${ref.current?.value.toLowerCase().trim()}`);
+                // router.push(`/${ref.current?.value.toLowerCase().trim()}`);
+                router.push(
+                  `/${ref.current?.value
+                    .toLowerCase()
+                    .trim()
+                    .replace(/\s/g, "-")}`
+                );
               }}
             >
               <div className="font-bold">ASK /</div>
@@ -79,9 +97,15 @@ export default function Chat() {
           AI-driven platform. It not only provides detailed insights but also
           creates interactive UI components on-the-fly
         </div>
-        <WalletDisconnectButton />
         <WalletMultiButton />
       </div>
+      <button
+        className="fixed bottom-4 right-4 btn bg-yellow p-5"
+        onClick={handleBonkBurn}
+      >
+        {" "}
+        burn bonk{" "}
+      </button>
       <div className="!rotate-90 fixed bottom-14 -right-4">
         <a
           href="https://github.com/abhisheknaiidu/gpt-generative-ui"
