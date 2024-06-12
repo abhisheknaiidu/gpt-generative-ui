@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { burnBONK } from "../hooks/burnBonk";
+import { useCreditsPurchase, useUser } from "../hooks/useUser";
 
 export default function Chat() {
   const router = useRouter();
@@ -17,19 +18,9 @@ export default function Chat() {
   useEffect(() => {
     ref.current?.focus?.();
   }, []);
+  const { user } = useUser();
+  const { addCredits } = useCreditsPurchase();
 
-  const handleBonkBurn = async () => {
-    let signature = "";
-    const _signature = await burnBONK(
-      "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
-      100 ** 3
-    );
-    if (_signature) {
-      debugger;
-      signature = _signature;
-      return toast.success("burned bonk successfully");
-    } else return;
-  };
   return (
     <>
       <Image
@@ -59,17 +50,35 @@ export default function Chat() {
               style={{
                 gridTemplateColumns: "auto 1fr auto",
               }}
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                if (!publicKey) return;
+                if (!publicKey) {
+                  toast.error("Connect wallet to ask questions");
+                  return;
+                }
+
+                if (!user) {
+                  toast.error("Please connect wallet to ask questions");
+                  return;
+                }
+
+                if (user.credits < 1) {
+                  const _signature = await burnBONK(
+                    "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
+                    100 ** 3
+                  );
+                  if (!_signature) {
+                    return toast.error(
+                      "Insufficient credits. Please purchase more credits."
+                    );
+                  } else {
+                    await addCredits(1);
+                    toast.success("Added 1 credit successfully");
+                  }
+                }
 
                 // router.push(`/${ref.current?.value.toLowerCase().trim()}`);
-                router.push(
-                  `/${ref.current?.value
-                    .toLowerCase()
-                    .trim()
-                    .replace(/\s/g, "-")}`
-                );
+                router.push(`/${ref.current?.value.toLowerCase().trim()}`);
               }}
             >
               <div className="font-bold">ASK /</div>
@@ -98,12 +107,6 @@ export default function Chat() {
           creates interactive UI components on-the-fly
         </div>
       </div>
-      <button
-        className="fixed bottom-4 right-4 btn bg-yellow p-5"
-        onClick={handleBonkBurn}
-      >
-        burn bonk
-      </button>
       <div className="!rotate-90 fixed bottom-14 -right-4">
         <a
           href="https://github.com/abhisheknaiidu/gpt-generative-ui"

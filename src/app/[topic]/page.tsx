@@ -5,6 +5,7 @@ import ImageWithFallback from "@/components/helpers/ImageWithFallback";
 import TopicCard from "@/components/TopicCards/TopicCards";
 import { useHashState } from "@/hooks/useHashState";
 import { fetcher, genericMutationFetcher } from "@/utils/swr-fetcher";
+import { useWallet } from "@solana/wallet-adapter-react";
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -16,9 +17,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import Markdown from "react-markdown";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
+import { burnBONK } from "../hooks/burnBonk";
+import { useCreditsPurchase, useUser } from "../hooks/useUser";
 import {
   AssetPrice,
   CHATCoinListData,
@@ -53,12 +57,14 @@ const ChatAssetPrice = ({ asset }: { asset: AssetPrice }) => {
       </div>
       <div className="flex flex-col">
         <p className={"text-sm ml-auto text-gray-500"}>
-          {asset.oneDayChange > 0 ? "+" : ""}
-          {(asset.oneDayChange * asset.price).toLocaleString(
-            undefined, // leave undefined to use the visitor's browser
-            // locale or a string like 'en-US' to override it.
-            { minimumFractionDigits: 2 }
-          )}
+          {isNaN(asset.oneDayChange) || isNaN(asset.price)
+            ? ""
+            : (asset.oneDayChange > 0 ? "+" : "") +
+              (asset.oneDayChange * asset.price).toLocaleString(
+                undefined, // leave undefined to use the visitor's browser
+                // locale or a string like 'en-US' to override it.
+                { minimumFractionDigits: 2 }
+              )}
         </p>
         <p
           className={classNames("text-xs ml-auto", {
@@ -66,7 +72,7 @@ const ChatAssetPrice = ({ asset }: { asset: AssetPrice }) => {
             "text-red-500": asset.oneDayChange < 0,
           })}
         >
-          {Math.abs(asset.oneDayChange)}%
+          {isNaN(asset.oneDayChange) ? "" : Math.abs(asset.oneDayChange) + "%"}
         </p>
       </div>
     </div>
@@ -189,13 +195,24 @@ const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
 export default function Page() {
   const params = useParams();
   const topic = params.topic;
+  const { publicKey } = useWallet();
+  const { mutate, user } = useUser();
+  const { addCredits } = useCreditsPurchase();
 
   const title = decodeURIComponent(topic.toString());
   const [hash, setHash] = useHashState();
   const currentItem = parseInt(hash.split("item")[1] || "0");
 
   const { data, error, isLoading } = useSWR(
-    ["/api/generate?topic=" + topic, "get"],
+    [
+      "/api/generate?topic=" + topic,
+      "get",
+      {
+        headers: {
+          "x-user-address": publicKey?.toBase58(),
+        },
+      },
+    ],
     fetcher,
     {
       revalidateIfStale: false,
@@ -204,7 +221,6 @@ export default function Page() {
     }
   );
 
-  console.log({ data, error, isLoading });
   const { trigger, isMutating } = useSWRMutation(
     "/api/discuss",
     genericMutationFetcher
@@ -228,12 +244,32 @@ export default function Page() {
           `/api/image?prompt=${item.imageGenerationPrompt}&size=${item.imageDimensions}`
         );
       });
+      mutate();
     }
   }, [data, error, isLoading]);
 
   const handleSubmission = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isMutating || isLoading || messageToSend.trim() === "") return;
+
+    if (!user) {
+      return toast.error("Please connect your wallet to continue");
+    }
+
+    if (user.credits < 1) {
+      const _signature = await burnBONK(
+        "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
+        100 ** 3
+      );
+      if (!_signature) {
+        return toast.error(
+          "Insufficient credits. Please purchase more credits."
+        );
+      } else {
+        await addCredits(1);
+        toast.success("Added 1 credit successfully");
+      }
+    }
 
     if (messageToSend.trim() === "") return;
     setMessages((prev) => [
@@ -254,10 +290,16 @@ export default function Page() {
           history: messages,
           message: messageToSend,
         },
+        {
+          headers: {
+            "x-user-address": publicKey?.toBase58(),
+          },
+        },
       ],
     });
 
-    console.log("RESPONSE: ", response);
+    await mutate();
+
     setMessages((prev) => [...prev, response.data]);
   };
 

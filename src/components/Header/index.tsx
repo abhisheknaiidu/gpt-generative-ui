@@ -1,16 +1,32 @@
 "use client";
 
+import { burnBONK } from "@/app/hooks/burnBonk";
+import { useUser } from "@/app/hooks/useUser";
 import Logo from "@/assets/logo.svg";
+import { genericMutationFetcher } from "@/utils/swr-fetcher";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import {
+  IconCurrencyCent,
+  IconPlugConnected,
+  IconSparkles,
+} from "@tabler/icons-react";
 import classNames from "classnames";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import useSWRMutation from "swr/mutation";
 
 const Header = () => {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const { publicKey, disconnect } = useWallet();
+  const { user, mutate } = useUser();
+  const { trigger } = useSWRMutation("/api/purchase", genericMutationFetcher);
+  console.log({ data: user });
 
   useEffect(() => {
     // change global css var --global-bg based on isHome
@@ -19,6 +35,41 @@ const Header = () => {
       isHome ? "#FDDE00" : "#FFFFFF"
     );
   }, [isHome]);
+  const [loading, setLoading] = useState(false);
+
+  const handleBonkBurn = async () => {
+    setLoading(true);
+    try {
+      let signature = "";
+      const _signature = await burnBONK(
+        "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
+        100 ** 3 * 5
+      );
+      if (_signature) {
+        signature = _signature;
+        await trigger({
+          type: "post",
+          rest: [
+            {},
+            {
+              headers: {
+                "x-user-address": publicKey?.toBase58(),
+              },
+            },
+          ],
+        });
+        await mutate();
+        setLoading(false);
+        return toast.success("Added 5 credits successfully");
+      } else {
+        throw { message: "Failed to burn bonk" };
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to burn bonk");
+    }
+    setLoading(false);
+  };
 
   return (
     <div
@@ -48,16 +99,72 @@ const Header = () => {
           <Image src={Logo} alt="Wagmi.quest" height={36} priority />
         </Link>
 
-        <WalletMultiButton
-          style={{
-            borderRadius: "2rem",
-            fontFamily: "var(--font-space-mono)",
-            fontSize: "0.9rem",
-            backgroundColor: "black",
-            fontWeight: 400,
-            textTransform: "uppercase",
-          }}
-        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2 }}
+          key={publicKey?.toBase58()}
+        >
+          {!publicKey ? (
+            <WalletMultiButton
+              style={{
+                borderRadius: "2rem",
+                fontFamily: "var(--font-space-mono)",
+                fontSize: "0.9rem",
+                backgroundColor: "black",
+                fontWeight: 400,
+                textTransform: "uppercase",
+              }}
+            >
+              CONNECT
+            </WalletMultiButton>
+          ) : (
+            <details className="dropdown dropdown-hover dropdown-bottom dropdown-end">
+              <summary className="m-1 btn !bg-black !bg-opacity-10 !p-0 !border-none !h-12 !w-12 flex items-center justify-center">
+                <img
+                  src={`https://api.dicebear.com/8.x/adventurer/svg?seed=${publicKey.toBase58()}`}
+                  alt="Avatar"
+                  className="rounded-full h-10 w-10"
+                />
+              </summary>
+              <ul className="p-2 shadow menu dropdown-content z-[1] bg-white rounded-box w-52">
+                <div className="flex items-center gap-0.5 flow-row bg-yellow-400 p-3 py-2 rounded-xl">
+                  <IconCurrencyCent
+                    color="white"
+                    size={18}
+                    className=" rounded-full ml-1 mr-2"
+                  />
+                  <div className="mr-1 text-gray-700">
+                    {user?.credits || "-"}
+                  </div>
+                  <div className="text-gray-600">Credits</div>
+                </div>
+                <li>
+                  <div
+                    className="hover:bg-yellow-100 gap-3"
+                    onClick={handleBonkBurn}
+                  >
+                    {loading ? (
+                      <div className="loading w-[18px]" />
+                    ) : (
+                      <IconSparkles size={18} color="rgb(250 204 21)" />
+                    )}
+                    <div className="flex flex-col gap-0">
+                      <div className="text-gray-600">Add 5 Credits</div>
+                      <div className="text-gray-400 text-xs">[50 Bonk]</div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div onClick={disconnect} className="hover:bg-red-100 gap-3">
+                    <IconPlugConnected size={18} color="red" />
+                    <div>Disconnet</div>
+                  </div>
+                </li>
+              </ul>
+            </details>
+          )}
+        </motion.div>
       </div>
     </div>
   );

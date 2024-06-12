@@ -2,6 +2,7 @@ import { ChatDataType, ChatItem, ChatSource } from "@/app/types/chat";
 import { InternetSource } from "@/app/types/sources";
 import { queryAssistantV1, queryAssistantV2 } from "@/services/ai";
 import { getTopicSources } from "@/services/search";
+import { getUserWithInitialization, updateUserCredits } from "@/services/users";
 import { OPENAI_ASSISTANTS } from "@/utils/constants";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,6 +15,25 @@ type CarouselItem = {
 
 export async function POST(req: NextRequest) {
   try {
+    const userAddress = req.headers.get("x-user-address");
+    if (!userAddress) {
+      return NextResponse.json(
+        {
+          error: "Missing user address in headers.",
+        },
+        { status: 400 }
+      );
+    }
+    const userData = await getUserWithInitialization(userAddress);
+    if (userData.credits < 1) {
+      return NextResponse.json(
+        {
+          error:
+            "Insufficient credits. Please purchase more credits using BONK tokens.",
+        },
+        { status: 402 }
+      );
+    }
     const data: {
       history: ChatItem[];
       message: string;
@@ -91,6 +111,7 @@ export async function POST(req: NextRequest) {
       type: flow,
       data: responseData,
     };
+    await updateUserCredits(userAddress, 1);
     return NextResponse.json(chatItem, { status: 200 });
   } catch (err) {
     console.log(err);

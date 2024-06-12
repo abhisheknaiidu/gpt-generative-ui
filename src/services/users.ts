@@ -1,6 +1,6 @@
 import { createClient } from "@vercel/kv";
 
-const DEFAULT_CREDITS = 10;
+const DEFAULT_CREDITS = 3;
 
 const kvClient = createClient({
   url: process.env.KV_REST_API_URL as string, // Ensure type is string
@@ -37,6 +37,17 @@ export const updateUserCredits = async (
 ) => {
   const userData = await getUserWithInitialization(userAddress);
   userData.credits -= usageCredits;
+
+  console.log("UPDATED USER: ", userData);
+  await kvClient.set(generateUserKey(userAddress), userData);
+};
+
+export const incrementUserCredits = async (
+  userAddress: string,
+  credits: number
+) => {
+  const userData = await getUserWithInitialization(userAddress);
+  userData.credits += credits;
 
   console.log("UPDATED USER: ", userData);
   await kvClient.set(generateUserKey(userAddress), userData);

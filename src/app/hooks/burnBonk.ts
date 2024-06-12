@@ -11,7 +11,6 @@ const connectWallet = async () => {
   if (wallet) {
     const response = await wallet.connect();
     if (response && response.publicKey) {
-      toast.success("Connected to wallet");
     } else {
       toast.error("Failed to connect to wallet");
       return;
@@ -37,7 +36,6 @@ export const burnBONK = async (mint: string, amount: number) => {
     burner
   );
   const burnerAccount = await connection.getAccountInfo(burnerAccountAddress);
-  debugger;
 
   if (burnerAccount === null) {
     console.log("Burner account does not exist");
@@ -55,7 +53,7 @@ export const burnBONK = async (mint: string, amount: number) => {
       amount * 10 ** 4
     )
   );
-  debugger;
+
   let signedTransaction: any = null;
   const { blockhash } = await connection.getLatestBlockhash("finalized");
   transaction.recentBlockhash = blockhash;

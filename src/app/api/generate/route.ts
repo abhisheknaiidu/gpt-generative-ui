@@ -15,7 +15,15 @@ type CarouselItem = {
 export async function GET(req: NextRequest) {
   try {
     // TODO: get user's address from headers
-    const userAddress = "0x1234567890abcdef1234567890abcdef12345678";
+    const userAddress = req.headers.get("x-user-address");
+    if (!userAddress) {
+      return NextResponse.json(
+        {
+          error: "Missing user address in headers.",
+        },
+        { status: 400 }
+      );
+    }
     const userData = await getUserWithInitialization(userAddress);
     if (userData.credits < 1) {
       return NextResponse.json(
