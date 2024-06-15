@@ -55,63 +55,66 @@ export async function POST(req: NextRequest) {
     const responseQuery = buildTextMessageQuery(history, message, sources);
 
     let responseData;
-    switch (flow) {
-      case ChatDataType.TEXT_MESSAGE:
-        responseData = await queryAssistantV2(
-          OPENAI_ASSISTANTS.CHAT_TEXT_MESSAGE,
-          responseQuery
-        );
-        break;
-      case ChatDataType.COINS_LIST:
-        responseData = await queryAssistantV1(
-          OPENAI_ASSISTANTS.CHAT_COINS_LIST,
-          responseQuery
-        );
-        try {
-          responseData = JSON.parse(responseData);
-        } catch (e) {
-          console.log("ERROR PARSING RESPONSE: ", responseData);
-          throw e;
-        }
-        break;
-      case ChatDataType.COIN_PRICE:
-        responseData = await queryAssistantV1(
-          OPENAI_ASSISTANTS.CHAT_COIN_PRICE,
-          responseQuery
-        );
-        try {
-          responseData = JSON.parse(responseData);
-        } catch (e) {
-          console.log("ERROR PARSING RESPONSE: ", responseData);
-          throw e;
-        }
-        break;
-      case ChatDataType.DATA_LIST:
-        responseData = await queryAssistantV1(
-          OPENAI_ASSISTANTS.CHAT_DATA_LIST,
-          responseQuery
-        );
-        try {
-          responseData = JSON.parse(responseData);
-        } catch (e) {
-          console.log("ERROR PARSING RESPONSE: ", responseData);
-          throw e;
-        }
-        break;
-      default:
-        // Use text as fallback
-        responseData = await queryAssistantV2(
-          OPENAI_ASSISTANTS.CHAT_TEXT_MESSAGE,
-          responseQuery
-        );
-    }
+    const getReply = async () => {
+      switch (flow) {
+        case ChatDataType.TEXT_MESSAGE:
+          responseData = await queryAssistantV2(
+            OPENAI_ASSISTANTS.CHAT_TEXT_MESSAGE,
+            responseQuery
+          );
+          break;
+        case ChatDataType.COINS_LIST:
+          responseData = await queryAssistantV1(
+            OPENAI_ASSISTANTS.CHAT_COINS_LIST,
+            responseQuery
+          );
+          try {
+            responseData = JSON.parse(responseData);
+          } catch (e) {
+            console.log("ERROR PARSING RESPONSE: ", responseData);
+            throw e;
+          }
+          break;
+        case ChatDataType.COIN_PRICE:
+          responseData = await queryAssistantV1(
+            OPENAI_ASSISTANTS.CHAT_COIN_PRICE,
+            responseQuery
+          );
+          try {
+            responseData = JSON.parse(responseData);
+          } catch (e) {
+            console.log("ERROR PARSING RESPONSE: ", responseData);
+            throw e;
+          }
+          break;
+        case ChatDataType.DATA_LIST:
+          responseData = await queryAssistantV1(
+            OPENAI_ASSISTANTS.CHAT_DATA_LIST,
+            responseQuery
+          );
+          try {
+            responseData = JSON.parse(responseData);
+          } catch (e) {
+            console.log("ERROR PARSING RESPONSE: ", responseData);
+            throw e;
+          }
+          break;
+        default:
+          // Use text as fallback
+          responseData = await queryAssistantV2(
+            OPENAI_ASSISTANTS.CHAT_TEXT_MESSAGE,
+            responseQuery
+          );
+      }
+    };
+
+    await Promise.all([getReply(), updateUserCredits(userAddress, 1)]);
 
     const chatItem: ChatItem = {
       source: ChatSource.WAGMI_AI,
       type: flow,
       data: responseData,
     };
-    await updateUserCredits(userAddress, 1);
     return NextResponse.json(chatItem, { status: 200 });
   } catch (err) {
     console.log(err);
