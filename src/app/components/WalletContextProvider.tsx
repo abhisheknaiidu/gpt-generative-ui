@@ -12,7 +12,10 @@ import { clusterApiUrl } from "@solana/web3.js";
 import { useMemo } from "react";
 
 const WalletContextProvider = ({ children }: { children?: any }) => {
-  const network = WalletAdapterNetwork.Devnet;
+  const network =
+    process.env.WALLET_ENV === "devnet"
+      ? WalletAdapterNetwork.Devnet
+      : WalletAdapterNetwork.Mainnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
   const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter()], [network]);
 
