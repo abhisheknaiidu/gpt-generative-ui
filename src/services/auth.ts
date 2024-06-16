@@ -1,4 +1,8 @@
 import { Transaction } from "@solana/web3.js";
+import { kvClient } from "./users";
+
+const generateSignatureUsageKey = (signature: string) =>
+  `purchase-signature:${signature}`;
 
 export const verifyBurn = async (signature: string | null, amount: number) => {
   if (!signature) {
@@ -12,12 +16,22 @@ export const verifyBurn = async (signature: string | null, amount: number) => {
     transaction.instructions[transaction.instructions.length - 1].data;
   const number = extractInteger(data);
   console.log(number, amount, number === BigInt(amount * 10 ** 9));
-  console.log(transaction.instructions);
+  if (number !== BigInt(amount * 10 ** 9)) {
+    throw { status: 401, message: "Invalid amount." };
+  }
   const isVerified = transaction.verifySignatures(true);
 
   if (!isVerified) {
     throw { status: 401, message: "Invalid signature." };
   }
+
+  const key = generateSignatureUsageKey(signature);
+  const flag = await kvClient.get<boolean>(key);
+  if (flag) {
+    throw { status: 401, message: "Signature already used." };
+  }
+  await kvClient.set(key, true);
+  // check if the signature is already user
 
   return isVerified;
 };
