@@ -257,18 +257,8 @@ export default function Page() {
     }
 
     if (user.credits < 1) {
-      const _signature = await burnBONK(
-        "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
-        100 ** 3
-      );
-      if (!_signature) {
-        return toast.error(
-          "Insufficient credits. Please purchase more credits."
-        );
-      } else {
-        await addCredits(1);
-        toast.success("Added 1 credit successfully");
-      }
+      toast.error("Insufficient credits. Adding 1 credit...");
+      await addCredits(1);
     }
 
     if (messageToSend.trim() === "") return;
@@ -403,14 +393,16 @@ export default function Page() {
               "btn btn-xs !bg-white bg-opacity-70 outline-none border-none px-4 py-1.5 !h-fit",
               {
                 "opacity-50 cursor-not-allowed":
-                  !data || currentItem === data.length - 1,
+                  !data || currentItem >= data.data.length - 1,
               }
             )}
-            aria-disabled={!data || currentItem === data.length - 1}
-            tabIndex={!data || currentItem === data.length - 1 ? -1 : undefined}
+            aria-disabled={!data || currentItem === data.data.length - 1}
+            tabIndex={
+              !data || currentItem === data.data.length - 1 ? -1 : undefined
+            }
             onClick={(e) => {
               e.preventDefault();
-              if (currentItem === data.length - 1) return;
+              if (currentItem >= data.data.length - 1) return;
               setHash(`item${currentItem + 1}`);
             }}
           >
