@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import { Instrument_Sans, Space_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import WalletContextProvider from "./components/WalletContextProvider";
+import { CookiesProvider } from "react-cookie";
 
 import "./globals.css";
 const spaceMono = Space_Mono({ weight: ["400", "700"], subsets: ["latin"] });
@@ -33,11 +34,13 @@ export default function RootLayout({
         }
       `}</style>
       <body className={spaceMono.className}>
-        <Toaster />
-        <WalletContextProvider>
-          {children}
-          <Header />
-        </WalletContextProvider>
+        <CookiesProvider defaultSetOptions={{ path: "/" }}>
+          <Toaster />
+          <WalletContextProvider>
+            {children}
+            <Header />
+          </WalletContextProvider>
+        </CookiesProvider>
       </body>
     </html>
   );
