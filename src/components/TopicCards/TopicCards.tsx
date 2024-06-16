@@ -161,7 +161,7 @@ export const TopicCard4 = ({ title, description, image, size }: Props) => {
       }}
     >
       <div
-        className="w-full relative rounded-xl rounded-l-none overflow-hidden"
+        className="w-full relative rounded-xl rounded-r-none overflow-hidden"
         style={{
           aspectRatio: "1792/1024",
         }}
