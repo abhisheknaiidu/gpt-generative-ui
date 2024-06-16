@@ -8,7 +8,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { burnBONK } from "../hooks/burnBonk";
 import { useCreditsPurchase, useUser } from "../hooks/useUser";
 
 export default function Chat() {
@@ -63,18 +62,8 @@ export default function Chat() {
                 }
 
                 if (user.credits < 1) {
-                  const _signature = await burnBONK(
-                    "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
-                    100 ** 3
-                  );
-                  if (!_signature) {
-                    return toast.error(
-                      "Insufficient credits. Please purchase more credits."
-                    );
-                  } else {
-                    await addCredits(1);
-                    toast.success("Added 1 credit successfully");
-                  }
+                  toast.error("Insufficient credits. Adding 1 credit...");
+                  await addCredits(1);
                 }
 
                 // router.push(`/${ref.current?.value.toLowerCase().trim()}`);
