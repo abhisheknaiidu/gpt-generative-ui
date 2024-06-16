@@ -393,16 +393,18 @@ export default function Page() {
               "btn btn-xs !bg-white bg-opacity-70 outline-none border-none px-4 py-1.5 !h-fit",
               {
                 "opacity-50 cursor-not-allowed":
-                  !data || currentItem >= data.data.length - 1,
+                  !data?.data || currentItem >= data.data.length - 1,
               }
             )}
-            aria-disabled={!data || currentItem === data.data.length - 1}
+            aria-disabled={!data?.data || currentItem >= data.data.length - 1}
             tabIndex={
-              !data || currentItem === data.data.length - 1 ? -1 : undefined
+              !data?.data || currentItem >= data.data.length - 1
+                ? -1
+                : undefined
             }
             onClick={(e) => {
               e.preventDefault();
-              if (currentItem >= data.data.length - 1) return;
+              if (!data?.data || currentItem >= data.data.length - 1) return;
               setHash(`item${currentItem + 1}`);
             }}
           >
