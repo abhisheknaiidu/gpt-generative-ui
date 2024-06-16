@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "Insufficient credits. Please purchase more credits using BONK tokens.",
+            "Insufficient credits. Please purchase some using BONK.",
         },
         { status: 402 }
       );

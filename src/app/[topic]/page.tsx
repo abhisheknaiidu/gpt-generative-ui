@@ -1,4 +1,5 @@
 "use client";
+import ErrorAnimation from "@/assets/error.json";
 import FallbackIcon from "@/assets/FallbackIcon.svg";
 import LoadingGIF from "@/assets/loading.gif";
 import ImageWithFallback from "@/components/helpers/ImageWithFallback";
@@ -13,6 +14,7 @@ import {
 } from "@tabler/icons-react";
 import classNames from "classnames";
 import { motion } from "framer-motion";
+import Lottie from "lottie-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -21,7 +23,6 @@ import toast from "react-hot-toast";
 import Markdown from "react-markdown";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
-import { burnBONK } from "../hooks/burnBonk";
 import { useCreditsPurchase, useUser } from "../hooks/useUser";
 import {
   AssetPrice,
@@ -338,7 +339,7 @@ export default function Page() {
               maxWidth: `${MAX_W / 16}rem overflow-hidden`,
             }}
           >
-            {isLoading || error || !data ? (
+            {isLoading ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -358,6 +359,30 @@ export default function Page() {
                   className="rounded-3xl opacity-50"
                 />
                 <span className="absolute loading loading-ring w-20"></span>
+              </motion.div>
+            ) : error || !data ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="rounded-3xl bg-white bg-opacity-20 relative flex items-center justify-center flex-col"
+                style={{
+                  height: `${MAX_W / 16}rem`,
+                  width: `${MAX_W / 16}rem`,
+                }}
+              >
+                <Lottie
+                  animationData={ErrorAnimation}
+                  loop={true}
+                  style={{
+                    height: `${MAX_W / 50}rem`,
+                    width: `${MAX_W / 50}rem`,
+                  }}
+                />
+                <h3 className="text-lg text-gray-800 text-center mx-20">
+                  {error?.response?.data?.error ??
+                    "Something went wrong. Please try again later."}
+                </h3>
               </motion.div>
             ) : (
               data.data.map(
