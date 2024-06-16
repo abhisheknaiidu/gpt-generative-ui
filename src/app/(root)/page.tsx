@@ -4,11 +4,13 @@ import bg from "@/assets/bg.svg";
 import bonk from "@/assets/bonk.png";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { IconBrandGithub, IconSparkles } from "@tabler/icons-react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useCreditsPurchase, useUser } from "../hooks/useUser";
+import { THREAD_TYPE } from "../types/chat";
 
 export default function Chat() {
   const router = useRouter();
@@ -19,6 +21,9 @@ export default function Chat() {
   }, []);
   const { user } = useUser();
   const { addCredits } = useCreditsPurchase();
+  const [threadType, setThreadType] = useState<THREAD_TYPE>(
+    THREAD_TYPE.EXPLAIN
+  );
 
   return (
     <>
@@ -67,10 +72,29 @@ export default function Chat() {
                 }
 
                 // router.push(`/${ref.current?.value.toLowerCase().trim()}`);
-                router.push(`/${ref.current?.value.toLowerCase().trim()}`);
+                router.push(
+                  `/${ref.current?.value
+                    .toLowerCase()
+                    .trim()}?type=${threadType}`
+                );
               }}
             >
-              <div className="font-bold">ASK /</div>
+              <motion.div
+                initial={{ scale: 0.97, opacity: 0, translateY: -4 }}
+                animate={{ scale: 1, opacity: 1, translateY: 0 }}
+                className="font-bold uppercase cursor-pointer select-none relative flex items-center justify-center"
+                onClick={() =>
+                  setThreadType(
+                    threadType === THREAD_TYPE.EXPLAIN
+                      ? THREAD_TYPE.DISCUSS
+                      : THREAD_TYPE.EXPLAIN
+                  )
+                }
+                key={threadType}
+              >
+                {threadType} /
+                <div className="loading loading-ring loading-xs absolute opacity-100 -translate-x-3 -top-1 left-2" />
+              </motion.div>
               <input
                 name="topic"
                 type="topic"

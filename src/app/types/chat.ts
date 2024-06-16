@@ -42,3 +42,8 @@ export type CHATDataListData = {
     description: string;
   }[];
 };
+
+export enum THREAD_TYPE {
+  DISCUSS = "DISCUSS",
+  EXPLAIN = "EXPLAIN",
+}
