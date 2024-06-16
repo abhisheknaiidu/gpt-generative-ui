@@ -1,5 +1,6 @@
 "use client";
 
+import { generateAuthTokenSignature } from "@/app/hooks/burnBonk";
 import { useCreditsPurchase, useUser } from "@/app/hooks/useUser";
 import Logo from "@/assets/logo.svg";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -15,7 +16,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 import toast from "react-hot-toast";
+
+const TOKEN_KEY = "wagmi-token-9y837850";
 
 const Header = () => {
   const pathname = usePathname();
@@ -23,6 +27,7 @@ const Header = () => {
   const { publicKey, disconnect } = useWallet();
   const { user, mutate } = useUser();
   const { addCredits } = useCreditsPurchase();
+  const [cookies, setCookie] = useCookies([TOKEN_KEY]);
 
   useEffect(() => {
     // change global css var --global-bg based on isHome
@@ -32,6 +37,7 @@ const Header = () => {
     );
   }, [isHome]);
   const [loading, setLoading] = useState(false);
+  const [signingToken, setSigningToken] = useState(false);
 
   const handleBonkBurn = async () => {
     setLoading(true);
@@ -44,6 +50,28 @@ const Header = () => {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (!cookies[TOKEN_KEY] && publicKey) {
+      setSigningToken(true);
+      const signAuth = async () => {
+        try {
+          // Sign transaction for generating token with public key as message and store in cookies
+          // toast.error("Token Expired, Please sign to to continue");
+          const token = await generateAuthTokenSignature(publicKey);
+          console.log("Token", token);
+          setCookie(TOKEN_KEY, token, {
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+          });
+        } catch (e) {
+          console.log(e);
+          toast.error("Failed to sign token");
+        }
+        setSigningToken(false);
+      };
+      signAuth();
+    }
+  }, [publicKey, cookies]);
 
   return (
     <div
@@ -88,6 +116,9 @@ const Header = () => {
                 backgroundColor: "black",
                 fontWeight: 400,
                 textTransform: "uppercase",
+              }}
+              onClick={(a: any) => {
+                console.log(a);
               }}
             >
               CONNECT
