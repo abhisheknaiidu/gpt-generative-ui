@@ -22,6 +22,7 @@ export type AssetPrice = {
   price: number;
   oneDayChange: number; // in %
   icon: string | null;
+  unit: string;
 };
 
 export type CHATCoinListData = {

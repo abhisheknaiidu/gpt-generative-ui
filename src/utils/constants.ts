@@ -96,6 +96,7 @@ After responding to the query, format the relevant data into JSON interface:
       name: string;
       price: number;
       oneDayChange: number; // in %
+      unit: string, // unit of the price for example $
       icon: string | null;
     }
   ];
@@ -133,6 +134,7 @@ After responding to the query, format the relevant data into JSON using the spec
     "price": "number",
     "oneDayChange": "number", // in %
     "icon": "string | null"
+    "unit": "string", // unit of the price for example $
   }
 }
 The title for the JSON data should directly reflect the user's query to ensure relevance. For example, if the query is about the price of Bitcoin, the title might be "Current Bitcoin Price and Daily Change."

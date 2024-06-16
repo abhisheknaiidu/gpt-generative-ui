@@ -53,7 +53,10 @@ const ChatAssetPrice = ({ asset }: { asset: AssetPrice }) => {
           <h4 className="text-sm uppercase font-semibold text-gray-700">
             {asset.name}
           </h4>
-          <p className="text-xs text-gray-500">{asset.price}</p>
+          <p className="text-xs text-gray-500">
+            {asset.unit}
+            {asset.price}
+          </p>
         </div>
       </div>
       <div className="flex flex-col">
@@ -61,7 +64,7 @@ const ChatAssetPrice = ({ asset }: { asset: AssetPrice }) => {
           {isNaN(asset.oneDayChange) || isNaN(asset.price)
             ? ""
             : (asset.oneDayChange > 0 ? "+" : "") +
-              (asset.oneDayChange * asset.price).toLocaleString(
+              ((asset.oneDayChange * asset.price) / 100).toLocaleString(
                 undefined, // leave undefined to use the visitor's browser
                 // locale or a string like 'en-US' to override it.
                 { minimumFractionDigits: 2 }
@@ -206,7 +209,7 @@ export default function Page() {
 
   const { data, error, isLoading } = useSWR(
     [
-      "/api/generate?topic=" + topic,
+      publicKey?.toBase58() ? "/api/generate?topic=" + topic : null,
       "get",
       {
         headers: {
