@@ -67,13 +67,13 @@ export const burnBONK = async (mint: string, amount: number) => {
     }
   } else return;
 
-  const txid = await connection
-    .sendRawTransaction(signedTransaction.serialize())
-    .catch((err) => {
-      console.log(err);
-    });
+  const txid = await connection.sendRawTransaction(
+    signedTransaction.serialize()
+  );
+
   if (txid) {
-    return txid;
+    const signature = await signedTransaction.serialize().toString("base64");
+    return signature;
   }
   toast.error("Failed to send transaction");
 };

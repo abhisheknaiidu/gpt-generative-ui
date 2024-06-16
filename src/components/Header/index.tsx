@@ -1,9 +1,7 @@
 "use client";
 
-import { burnBONK } from "@/app/hooks/burnBonk";
-import { useUser } from "@/app/hooks/useUser";
+import { useCreditsPurchase, useUser } from "@/app/hooks/useUser";
 import Logo from "@/assets/logo.svg";
-import { genericMutationFetcher } from "@/utils/swr-fetcher";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import {
@@ -18,15 +16,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import useSWRMutation from "swr/mutation";
 
 const Header = () => {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const { publicKey, disconnect } = useWallet();
   const { user, mutate } = useUser();
-  const { trigger } = useSWRMutation("/api/purchase", genericMutationFetcher);
-  console.log({ data: user });
+  const { addCredits } = useCreditsPurchase();
 
   useEffect(() => {
     // change global css var --global-bg based on isHome
@@ -40,30 +36,8 @@ const Header = () => {
   const handleBonkBurn = async () => {
     setLoading(true);
     try {
-      let signature = "";
-      const _signature = await burnBONK(
-        "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
-        100 ** 3 * 5
-      );
-      if (_signature) {
-        signature = _signature;
-        await trigger({
-          type: "post",
-          rest: [
-            {},
-            {
-              headers: {
-                "x-user-address": publicKey?.toBase58(),
-              },
-            },
-          ],
-        });
-        await mutate();
-        setLoading(false);
-        return toast.success("Added 5 credits successfully");
-      } else {
-        throw { message: "Failed to burn bonk" };
-      }
+      await addCredits(5);
+      setLoading(false);
     } catch (e) {
       console.log(e);
       toast.error("Failed to burn bonk");

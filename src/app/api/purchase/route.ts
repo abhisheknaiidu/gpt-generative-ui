@@ -1,3 +1,4 @@
+import { verifyBurn } from "@/services/auth";
 import { incrementUserCredits } from "@/services/users";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,6 +14,11 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Verify signature of burn
+    const signature = req.headers.get("x-signature");
+    await verifyBurn(signature, credits * 10);
+
     await incrementUserCredits(userAddress, credits);
     return NextResponse.json(
       {
@@ -26,7 +32,7 @@ export async function POST(req: NextRequest) {
       {
         error: err.message || "An error occurred while processing the request.",
       },
-      { status: 500 }
+      { status: err.status || 500 }
     );
   }
 }
