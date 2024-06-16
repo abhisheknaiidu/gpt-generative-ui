@@ -2,7 +2,7 @@ import { createClient } from "@vercel/kv";
 
 const DEFAULT_CREDITS = 3;
 
-const kvClient = createClient({
+export const kvClient = createClient({
   url: process.env.KV_REST_API_URL as string, // Ensure type is string
   token: process.env.KV_REST_API_TOKEN as string,
   cache: "no-cache",
