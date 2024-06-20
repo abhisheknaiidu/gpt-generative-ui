@@ -17,18 +17,18 @@ export const verifyBurn = async (signature: string | null, amount: number) => {
   const number = extractInteger(data);
   console.log(number, amount, number === BigInt(amount * 10 ** 9));
   if (number !== BigInt(amount * 10 ** 9)) {
-    throw { status: 401, message: "Invalid amount." };
+    throw { status: 400, message: "Invalid amount." };
   }
   const isVerified = transaction.verifySignatures(true);
 
   if (!isVerified) {
-    throw { status: 401, message: "Invalid signature." };
+    throw { status: 400, message: "Invalid signature." };
   }
 
   const key = generateSignatureUsageKey(signature);
   const flag = await kvClient.get<boolean>(key);
   if (flag) {
-    throw { status: 401, message: "Signature already used." };
+    throw { status: 400, message: "Signature already used." };
   }
   await kvClient.set(key, true);
   // check if the signature is already user
