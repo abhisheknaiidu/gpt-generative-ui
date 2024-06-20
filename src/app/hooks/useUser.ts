@@ -43,7 +43,7 @@ export const useCreditsPurchase = () => {
   const addCredits = async (credits: number = 5) => {
     const _signature = await burnBONK(
       "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
-      credits * 10
+      credits * 10 ** 9
     );
 
     if (!_signature) {
