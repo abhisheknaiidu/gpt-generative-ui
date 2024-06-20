@@ -13,7 +13,7 @@ import { useMemo } from "react";
 
 const WalletContextProvider = ({ children }: { children?: any }) => {
   const network =
-    process.env.WALLET_ENV === "devnet"
+    process.env.NEXT_PUBLIC_WALLET_ENV === "devnet"
       ? WalletAdapterNetwork.Devnet
       : WalletAdapterNetwork.Mainnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
