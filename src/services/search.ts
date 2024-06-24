@@ -1,5 +1,7 @@
-import { InternetSource } from "@/app/types/sources";
+import { InternetSource, InternetSourceV2 } from "@/app/types/sources";
+import { GOOGLE_ACCOUNT_CX, GOOGLE_API_KEY } from "@/utils/constants";
 import { Readability } from "@mozilla/readability";
+import axios from "axios";
 import * as cheerio from "cheerio";
 import { JSDOM } from "jsdom";
 
@@ -96,4 +98,30 @@ export const getTopicSources = async (
   }
 
   return filteredSources;
+};
+
+export const getTopicSourcesV2 = async (
+  topic: string
+): Promise<InternetSourceV2[]> => {
+  console.time("getTopicSourcesV2");
+  const response = await axios.get(
+    "https://www.googleapis.com/customsearch/v1",
+    {
+      params: {
+        q: topic,
+        key: GOOGLE_API_KEY,
+        cx: GOOGLE_ACCOUNT_CX,
+      },
+    }
+  );
+
+  const result = response.data.items?.map((item: any) => {
+    return {
+      url: item.link,
+      title: item.title,
+      content: item.snippet,
+    };
+  });
+  console.timeEnd("getTopicSourcesV2");
+  return result;
 };

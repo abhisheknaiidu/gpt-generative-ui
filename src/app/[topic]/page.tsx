@@ -275,8 +275,11 @@ export default function Page() {
       type: "post",
       rest: [
         {
-          history: messages,
-          message: messageToSend,
+          history: !isExplainer && !initialCallDone.current ? [] : messages,
+          message:
+            !isExplainer && !initialCallDone.current
+              ? messages[0].data
+              : messageToSend,
         },
         {
           headers: {

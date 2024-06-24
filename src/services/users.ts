@@ -15,6 +15,7 @@ const createDefaultUserData = () => ({
 });
 
 export const getUserWithInitialization = async (userAddress: string) => {
+  console.time("GET_USER");
   const userKey = generateUserKey(userAddress);
   const user = await kvClient.get<{ credits: number; createdAt: number }>(
     userKey
@@ -28,6 +29,7 @@ export const getUserWithInitialization = async (userAddress: string) => {
     return userData;
   }
 
+  console.timeEnd("GET_USER");
   return user;
 };
 

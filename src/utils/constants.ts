@@ -11,6 +11,9 @@ export const bonkToCreditMultiplier = parseFloat(
   process.env.NEXT_PUBLIC_BONK_TO_CREDITS_MULTIPLIER || "0.01"
 );
 
+export const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+export const GOOGLE_ACCOUNT_CX = process.env.GOOGLE_ACCOUNT_CX;
+
 export const OPENAI_ASSISTANT_PROMPTS: {
   [key in OPENAI_ASSISTANTS]: string;
 } = {

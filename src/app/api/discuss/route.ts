@@ -1,7 +1,7 @@
 import { ChatDataType, ChatItem, ChatSource } from "@/app/types/chat";
-import { InternetSource } from "@/app/types/sources";
+import { InternetSourceV2 } from "@/app/types/sources";
 import { queryAssistantV1, queryAssistantV2 } from "@/services/ai";
-import { getTopicSources } from "@/services/search";
+import { getTopicSourcesV2 } from "@/services/search";
 import { getUserWithInitialization, updateUserCredits } from "@/services/users";
 import { OPENAI_ASSISTANTS } from "@/utils/constants";
 import { NextRequest, NextResponse } from "next/server";
@@ -41,11 +41,12 @@ export async function POST(req: NextRequest) {
 
     const history = data.history;
     const message = data.message;
+    console.log("MESSAGE: ", message);
 
     const decisionQuery = buildDecisionQuery(history, message);
 
     const [sources, flow] = await Promise.all([
-      getTopicSources(message),
+      getTopicSourcesV2(message),
       queryAssistantV2(
         OPENAI_ASSISTANTS.DECISION_DRIVER,
         decisionQuery
@@ -132,7 +133,7 @@ const buildDecisionQuery = (history: ChatItem[], message: string) => {
 const buildTextMessageQuery = (
   history: ChatItem[],
   message: string,
-  sources: InternetSource[]
+  sources: InternetSourceV2[]
 ) => {
   return `
     HISTORY: ${JSON.stringify(history, null, 2)},

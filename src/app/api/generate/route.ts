@@ -1,6 +1,6 @@
-import { InternetSource } from "@/app/types/sources";
+import { InternetSourceV2 } from "@/app/types/sources";
 import { queryAssistantV1 } from "@/services/ai";
-import { getTopicSources } from "@/services/search";
+import { getTopicSourcesV2 } from "@/services/search";
 import { getUserWithInitialization, updateUserCredits } from "@/services/users";
 import { OPENAI_ASSISTANTS } from "@/utils/constants";
 import { NextRequest, NextResponse } from "next/server";
@@ -28,8 +28,7 @@ export async function GET(req: NextRequest) {
     if (userData.credits < 1) {
       return NextResponse.json(
         {
-          error:
-            "Insufficient credits. Please purchase some using BONK.",
+          error: "Insufficient credits. Please purchase some using BONK.",
         },
         { status: 402 }
       );
@@ -44,7 +43,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const sources = await getTopicSources(topic);
+    const sources = await getTopicSourcesV2(topic);
 
     const message = buildQuery(topic, sources);
     const response = await queryAssistantV1(
@@ -60,7 +59,9 @@ export async function GET(req: NextRequest) {
       throw e;
     }
 
-    await updateUserCredits(userAddress, 1);
+    // Update user's credits in background
+    updateUserCredits(userAddress, 1);
+
     return NextResponse.json(carouselData, { status: 200 });
   } catch (err: any) {
     console.log(err);
@@ -73,7 +74,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-const buildQuery = (topic: string, sources: InternetSource[]) => {
+const buildQuery = (topic: string, sources: InternetSourceV2[]) => {
   return `
     TOPIC: ${topic},
     DATA: ${JSON.stringify(sources, null, 2)}
