@@ -121,9 +121,8 @@ export default function Chat() {
           </div>
         </div>
         <div className="in-s uppercase max-w-[33rem] text-center text-sm opacity-80">
-          Discover a smarter way to learn and find information with our
-          AI-driven platform. It not only provides detailed insights but also
-          creates interactive UI components on-the-fly
+          Discover a smarter way to explore. It not only provides detailed
+          insights but also creates interactive UI components on-the-fly
         </div>
       </div>
       <div className="!rotate-90 fixed bottom-14 -right-4">
