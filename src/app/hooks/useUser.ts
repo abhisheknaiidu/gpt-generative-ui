@@ -1,4 +1,5 @@
 import { burnBONK } from "@/app/hooks/burnBonk";
+import { bonkToCreditMultiplier } from "@/utils/constants";
 import { fetcher, genericMutationFetcher } from "@/utils/swr-fetcher";
 import { useWallet } from "@solana/wallet-adapter-react";
 import toast from "react-hot-toast";
@@ -43,7 +44,7 @@ export const useCreditsPurchase = () => {
   const addCredits = async (credits: number = 5) => {
     const _signature = await burnBONK(
       "A14YRiYmr3psqEMYNTfm16943JBzDPMG3F9oB5A9pk63",
-      credits * 10 ** 9
+      (credits * 10 ** 5) / bonkToCreditMultiplier
     );
 
     if (!_signature) {

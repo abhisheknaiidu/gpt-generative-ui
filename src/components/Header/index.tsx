@@ -3,6 +3,7 @@
 import { generateAuthTokenSignature } from "@/app/hooks/burnBonk";
 import { useCreditsPurchase, useUser } from "@/app/hooks/useUser";
 import Logo from "@/assets/logo.svg";
+import { bonkToCreditMultiplier } from "@/utils/constants";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import {
@@ -27,7 +28,6 @@ const Header = () => {
   const { publicKey, disconnect } = useWallet();
   const { user, mutate } = useUser();
   const { addCredits } = useCreditsPurchase();
-  const [cookies, setCookie] = useCookies([TOKEN_KEY]);
 
   useEffect(() => {
     // change global css var --global-bg based on isHome
@@ -37,7 +37,6 @@ const Header = () => {
     );
   }, [isHome]);
   const [loading, setLoading] = useState(false);
-  const [signingToken, setSigningToken] = useState(false);
 
   const handleBonkBurn = async () => {
     setLoading(true);
@@ -50,28 +49,6 @@ const Header = () => {
     }
     setLoading(false);
   };
-
-  useEffect(() => {
-    if (!cookies[TOKEN_KEY] && publicKey) {
-      setSigningToken(true);
-      const signAuth = async () => {
-        try {
-          // Sign transaction for generating token with public key as message and store in cookies
-          // toast.error("Token Expired, Please sign to to continue");
-          const token = await generateAuthTokenSignature(publicKey);
-          console.log("Token", token);
-          setCookie(TOKEN_KEY, token, {
-            maxAge: 60 * 60 * 24 * 30, // 30 days
-          });
-        } catch (e) {
-          console.log(e);
-          toast.error("Failed to sign token");
-        }
-        setSigningToken(false);
-      };
-      signAuth();
-    }
-  }, [publicKey, cookies]);
 
   return (
     <div
@@ -117,9 +94,6 @@ const Header = () => {
                 fontWeight: 400,
                 textTransform: "uppercase",
               }}
-              onClick={(a: any) => {
-                console.log(a);
-              }}
             >
               CONNECT
             </WalletMultiButton>
@@ -156,7 +130,9 @@ const Header = () => {
                     )}
                     <div className="flex flex-col gap-0">
                       <div className="text-gray-600">Add 5 Credits</div>
-                      <div className="text-gray-400 text-xs">[50 Bonk]</div>
+                      <div className="text-gray-400 text-xs">
+                        [{5 / bonkToCreditMultiplier} Bonk]
+                      </div>
                     </div>
                   </div>
                 </li>

@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     // Verify signature of burn
     const signature = req.headers.get("x-signature");
-    await verifyBurn(signature, credits * 10);
+    await verifyBurn(signature, credits);
 
     await incrementUserCredits(userAddress, credits);
     return NextResponse.json(

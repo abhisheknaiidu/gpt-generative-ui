@@ -22,8 +22,14 @@ export default function Chat() {
   const { user } = useUser();
   const { addCredits } = useCreditsPurchase();
   const [threadType, setThreadType] = useState<THREAD_TYPE>(
-    THREAD_TYPE.EXPLAIN
+    THREAD_TYPE.DISCUSS
   );
+
+  useEffect(() => {
+    setTimeout(() => {
+      setThreadType(THREAD_TYPE.EXPLAIN);
+    }, 800);
+  }, []);
 
   return (
     <>

@@ -7,6 +7,8 @@ export enum OPENAI_ASSISTANTS {
   CHAT_DATA_LIST = "asst_KQaBoGG6DYVgIDcjytIhy2Tx",
 }
 
+export const bonkToCreditMultiplier = 1;
+
 export const OPENAI_ASSISTANT_PROMPTS: {
   [key in OPENAI_ASSISTANTS]: string;
 } = {

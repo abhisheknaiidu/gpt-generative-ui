@@ -1,5 +1,6 @@
 import { Transaction } from "@solana/web3.js";
 import { kvClient } from "./users";
+import { bonkToCreditMultiplier } from "@/utils/constants";
 
 const generateSignatureUsageKey = (signature: string) =>
   `purchase-signature:${signature}`;
@@ -15,8 +16,12 @@ export const verifyBurn = async (signature: string | null, amount: number) => {
   const data =
     transaction.instructions[transaction.instructions.length - 1].data;
   const number = extractInteger(data);
-  console.log(number, amount, number === BigInt(amount * 10 ** 9));
-  if (number !== BigInt(amount * 10 ** 9)) {
+  console.log(
+    number,
+    amount,
+    number === BigInt((amount * 10 ** 9) / bonkToCreditMultiplier)
+  );
+  if (number !== BigInt((amount * 10 ** 9) / bonkToCreditMultiplier)) {
     throw { status: 400, message: "Invalid amount." };
   }
   const isVerified = transaction.verifySignatures(true);
