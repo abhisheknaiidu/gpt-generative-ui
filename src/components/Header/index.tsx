@@ -1,6 +1,5 @@
 "use client";
 
-import { generateAuthTokenSignature } from "@/app/hooks/burnBonk";
 import { useCreditsPurchase, useUser } from "@/app/hooks/useUser";
 import Logo from "@/assets/logo.svg";
 import { bonkToCreditMultiplier } from "@/utils/constants";
@@ -25,7 +24,7 @@ const TOKEN_KEY = "wagmi-token-9y837850";
 const Header = () => {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const { publicKey, disconnect } = useWallet();
+  const { publicKey, disconnect, signIn } = useWallet();
   const { user, mutate } = useUser();
   const { addCredits } = useCreditsPurchase();
 
@@ -48,6 +47,22 @@ const Header = () => {
       toast.error("Failed to burn bonk");
     }
     setLoading(false);
+  };
+
+  useEffect(() => {
+    console.log("signIn", signIn);
+  }, [signIn]);
+
+  const handleSignIn = async () => {
+    try {
+      if (!signIn) throw new Error("Sign in not available");
+      const res = await signIn();
+      console.log("SIGN IN RES", res);
+      toast.success("Signed in successfully");
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to sign in");
+    }
   };
 
   return (
@@ -85,7 +100,19 @@ const Header = () => {
           key={publicKey?.toBase58()}
         >
           {!publicKey ? (
-            <WalletMultiButton
+            // <WalletMultiButton
+            //   style={{
+            //     borderRadius: "2rem",
+            //     fontFamily: "var(--font-space-mono)",
+            //     fontSize: "0.9rem",
+            //     backgroundColor: "black",
+            //     fontWeight: 400,
+            //     textTransform: "uppercase",
+            //   }}
+            // >
+            //   CONNECT
+            // </WalletMultiButton>
+            <button
               style={{
                 borderRadius: "2rem",
                 fontFamily: "var(--font-space-mono)",
@@ -94,9 +121,10 @@ const Header = () => {
                 fontWeight: 400,
                 textTransform: "uppercase",
               }}
+              onClick={handleSignIn}
             >
               CONNECT
-            </WalletMultiButton>
+            </button>
           ) : (
             <details className="dropdown dropdown-hover dropdown-bottom dropdown-end">
               <summary className="m-1 btn !bg-black !bg-opacity-10 !p-0 !border-none !h-12 !w-12 flex items-center justify-center">
