@@ -74,7 +74,8 @@ const Header = () => {
         className={classNames(
           "transition-all duration-500 bg-[#FFFFFF] h-16 flex items-center justify-between",
           {
-            "rounded-[2rem] backdrop-blur-lg px-3 bg-opacity-70": isHome,
+            "rounded-[2rem] backdrop-blur-lg px-3 pr-[6px] bg-opacity-70":
+              isHome,
             "rounded-[0rem] backdrop-blur-xl bg-opacity-70": !isHome,
           }
         )}
