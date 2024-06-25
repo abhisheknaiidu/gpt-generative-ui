@@ -543,8 +543,8 @@ export default function Page() {
             <input
               name="message"
               type="message"
-              placeholder="What is PRICE Of BONK??..."
-              className="!bg-transparent !border-none !outline-none uppercase w-full"
+              placeholder="what is price of BONK?"
+              className="!bg-transparent !border-none !outline-none w-full"
               autoComplete="off"
               value={messageToSend}
               onChange={(e) => setMessageToSend(e.target.value)}
