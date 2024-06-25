@@ -312,8 +312,8 @@ export default function Page() {
     }
 
     if (user.credits < 1) {
-      toast.error("Insufficient credits. Adding 1 credit...");
-      await addCredits(1);
+      return toast.error("Insufficient credits. add credits to continue.");
+      // await addCredits(1);
     }
 
     if (messageToSend.trim() === "") return;

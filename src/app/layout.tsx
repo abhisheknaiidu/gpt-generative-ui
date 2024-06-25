@@ -4,10 +4,11 @@ import { Instrument_Sans, Space_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import WalletContextProvider from "./components/WalletContextProvider";
 import { CookiesProvider } from "react-cookie";
-
+import { Onest } from "next/font/google";
 import "./globals.css";
 const spaceMono = Space_Mono({ weight: ["400", "700"], subsets: ["latin"] });
 const instrumentSans = Instrument_Sans({ subsets: ["latin"] });
+const onest = Onest({ subsets: ["latin"] });
 
 // export const metadata: Metadata = {
 //   title: "wagmi.quest",
@@ -33,7 +34,7 @@ export default function RootLayout({
           font-weight: ${spaceMono.style.fontWeight};
         }
       `}</style>
-      <body className={spaceMono.className}>
+      <body className={onest.className}>
         <CookiesProvider defaultSetOptions={{ path: "/" }}>
           <Toaster />
           <WalletContextProvider>

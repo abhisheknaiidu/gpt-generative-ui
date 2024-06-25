@@ -34,16 +34,30 @@ const Header = () => {
   }, [isHome]);
   const [loading, setLoading] = useState(false);
 
+  const [solLoading, setSolLoading] = useState(false);
+
   const handleBonkBurn = async () => {
     setLoading(true);
     try {
-      await addCredits(5);
+      await addCredits(5, true);
       setLoading(false);
     } catch (e) {
       console.log(e);
       toast.error("Failed to burn bonk");
     }
     setLoading(false);
+  };
+
+  const handlePaySol = async () => {
+    setSolLoading(true);
+    try {
+      await addCredits(5);
+      setSolLoading(false);
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to pay via sol");
+    }
+    setSolLoading(false);
   };
 
   return (
@@ -133,9 +147,25 @@ const Header = () => {
                   </div>
                 </li>
                 <li>
+                  <div
+                    className="hover:bg-yellow-100 gap-3"
+                    onClick={handlePaySol}
+                  >
+                    {solLoading ? (
+                      <div className="loading w-[18px]" />
+                    ) : (
+                      <IconSparkles size={18} color="rgb(250 204 21)" />
+                    )}
+                    <div className="flex flex-col gap-0">
+                      <div className="text-gray-600">Add 10 Credits</div>
+                      <div className="text-gray-400 text-xs">[0.0075 Sol]</div>
+                    </div>
+                  </div>
+                </li>
+                <li>
                   <div onClick={disconnect} className="hover:bg-red-100 gap-3">
                     <IconPlugConnected size={18} color="red" />
-                    <div>Disconnet</div>
+                    <div>Disconnect</div>
                   </div>
                 </li>
               </ul>
