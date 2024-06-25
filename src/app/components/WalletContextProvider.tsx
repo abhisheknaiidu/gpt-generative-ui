@@ -17,7 +17,7 @@ const WalletContextProvider = ({ children }: { children?: any }) => {
       ? WalletAdapterNetwork.Devnet
       : WalletAdapterNetwork.Mainnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-  const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter()], [network]);
+  const wallets = useMemo(() => [], [network]);
 
   return (
     <ConnectionProvider endpoint={endpoint}>

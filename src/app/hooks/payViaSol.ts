@@ -63,26 +63,38 @@ export const payViaSol = async (
       lamports: roundedNumber * LAMPORTS_PER_SOL,
     })
   );
-  const latestBlockHash = await connection.getLatestBlockhash("finalized");
-  transaction.recentBlockhash = latestBlockHash.blockhash;
+  const { blockhash } = await connection.getLatestBlockhash("finalized");
+  transaction.recentBlockhash = blockhash;
   transaction.feePayer = publicKey;
+  const { signature } = await window.solana.signAndSendTransaction(transaction);
+  const latestBlockHash = await connection.getLatestBlockhash();
 
-  const signedTransaction = await wallet.signTransaction(transaction);
-  try {
-    const txid = await connection.sendRawTransaction(
-      signedTransaction.serialize()
-    );
-    if (!txid) throw new Error("txid is undefined");
-    const verified = connection.confirmTransaction(txid);
-    toast.promise(verified, {
-      loading: "Confirming Transaction, you can close this tab",
-      success: "Transaction Confirmed",
-      error: "Transaction Failed",
-    });
-    return txid;
-  } catch (error) {
-    console.error(error);
-    toast.error("Failed to send transaction");
-    return;
+  const confirmation = await connection.confirmTransaction({
+    blockhash: latestBlockHash.blockhash,
+    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+    signature,
+  });
+  if (confirmation.value.err) {
+    console.error("Transaction failed:", confirmation.value.err);
+    return toast.error("something went wrong");
   }
+  return signature;
+  //   const signedTransaction = await wallet.signTransaction(transaction);
+  //   try {
+  //     const txid = await connection.sendRawTransaction(
+  //       signedTransaction.serialize()
+  //     );
+  //     if (!txid) throw new Error("txid is undefined");
+  //     const verified = connection.confirmTransaction(txid);
+  //     toast.promise(verified, {
+  //       loading: "Confirming Transaction, you can close this tab",
+  //       success: "Transaction Confirmed",
+  //       error: "Transaction Failed",
+  //     });
+  //     return txid;
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("Failed to send transaction");
+  //     return undefined;
+  //   }
 };
