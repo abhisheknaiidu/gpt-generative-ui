@@ -1,4 +1,4 @@
-import { verifyBurn } from "@/services/auth";
+import { fetchTransactions, verifyBurn, verifyPayment } from "@/services/auth";
 import { incrementUserCredits } from "@/services/users";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,7 +17,12 @@ export async function POST(req: NextRequest) {
 
     // Verify signature of burn
     const signature = req.headers.get("x-signature");
-    await verifyBurn(signature, credits);
+    const payVia = req.headers.get("x-pay-via");
+    // if (payVia === "bonk") {
+    //   await verifyBurn(signature, credits);
+    // } else {
+    //   await fetchTransactions();
+    // }
 
     await incrementUserCredits(userAddress, credits);
     return NextResponse.json(
