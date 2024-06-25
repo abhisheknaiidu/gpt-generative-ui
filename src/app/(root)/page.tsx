@@ -44,19 +44,29 @@ export default function Chat() {
         }}
       />
       <div className="min-h-[100dvh] flex flex-col justify-center items-center py-20 gap-10">
-        <div className="flex flex-col gap-8 items-center my-auto">
+        <div className="flex flex-col items-center gap-8 my-auto">
           <div className="py-2 px-4 flex gap-4 bg-[#020227] bg-opacity-5 rounded-full">
             <div>POWERED BY BONK</div>
             <Image src={bonk} alt="Bonk" height={24} />
           </div>
-          <h1 className="in-s text-5xl text-center uppercase leading-tight sm:text-3xl sm:px-5 break-words">
+          <h1 className="text-5xl leading-tight text-center uppercase break-words in-s sm:text-3xl sm:px-5">
             Engage with <strong>Intuitive AI</strong>
             <br />
             and <strong>Generative UI</strong>
           </h1>
-          <div className="flex items-center justify-center outline outline-[#ADAA9E] border-opacity-30 p-1.5 rounded-[1.7rem] w-full max-w-[35rem] mt-4 focus-within:outline-[2px] transition-all duration-100">
+          <div
+            className={
+              "flex items-center justify-center outline outline-[#ADAA9E] border-opacity-30 p-1.5 rounded-[1.7rem] w-full max-w-[35rem] mt-4 focus-within:outline-[2px] transition-all duration-100" +
+              " " +
+              "sm:max-w-[90%] sm:mt-24 sm:bg-white sm:bg-opacity-20"
+            }
+          >
             <form
-              className="w-full bg-white bg-opacity-80 items-center justify-center grid rounded-[1.2rem] pl-4 gap-2"
+              className={
+                "w-full bg-white bg-opacity-80 items-center justify-center grid rounded-[1.2rem] pl-4 gap-2 relative" +
+                " " +
+                "sm:py-3.5"
+              }
               style={{
                 gridTemplateColumns: "auto 1fr auto",
               }}
@@ -85,22 +95,26 @@ export default function Chat() {
                 );
               }}
             >
-              <motion.div
-                initial={{ scale: 0.97, opacity: 0, translateY: -4 }}
-                animate={{ scale: 1, opacity: 1, translateY: 0 }}
-                className="font-bold uppercase cursor-pointer select-none relative flex items-center justify-center"
-                onClick={() =>
-                  setThreadType(
-                    threadType === THREAD_TYPE.EXPLAIN
-                      ? THREAD_TYPE.DISCUSS
-                      : THREAD_TYPE.EXPLAIN
-                  )
-                }
-                key={threadType}
-              >
-                {threadType} /
-                <div className="loading loading-ring loading-xs absolute opacity-100 -translate-x-3 -top-1 left-2" />
-              </motion.div>
+              <div className="transition-all sm:absolute sm:bottom-full sm:ml-[50%] sm:-translate-x-1/2 sm:mb-6 sm:bg-black sm:bg-opacity-10 sm:px-4 sm:py-1 sm:rounded-full">
+                <motion.div
+                  initial={{ scale: 0.97, opacity: 0, translateY: -4 }}
+                  animate={{ scale: 1, opacity: 1, translateY: 0 }}
+                  className={
+                    "relative flex items-center justify-center font-bold uppercase cursor-pointer select-none"
+                  }
+                  onClick={() =>
+                    setThreadType(
+                      threadType === THREAD_TYPE.EXPLAIN
+                        ? THREAD_TYPE.DISCUSS
+                        : THREAD_TYPE.EXPLAIN
+                    )
+                  }
+                  key={threadType}
+                >
+                  {threadType} /
+                  <div className="absolute -translate-x-3 opacity-100 loading loading-ring loading-xs -top-1 left-2" />
+                </motion.div>
+              </div>
               <input
                 name="topic"
                 type="topic"
@@ -110,28 +124,40 @@ export default function Chat() {
                 ref={ref}
                 autoComplete="off"
               />
-              <button
-                type="submit"
-                className="btn !rounded-[1.2rem] btn-md !h-[3.5rem]"
-              >
-                GENERATE
-                <IconSparkles color="white" />
-              </button>
+              <div className="sm:absolute sm:top-full sm:mt-6 sm:ml-[50%] sm:-translate-x-1/2">
+                <button
+                  type="submit"
+                  className={"btn !rounded-[1.2rem] btn-md !h-[3.5rem]"}
+                >
+                  GENERATE
+                  <IconSparkles color="white" />
+                </button>
+              </div>
             </form>
           </div>
         </div>
-        <div className="in-s uppercase max-w-[33rem] text-center text-sm opacity-80">
+        <div className="in-s uppercase max-w-[33rem] text-center text-sm opacity-80 sm:mx-10 sm:text-xs">
           Discover a smarter way to explore. It not only provides detailed
           insights but also creates interactive UI components on-the-fly
         </div>
+        <div className="hidden sm:block">
+          <a
+            href="https://github.com/abhisheknaiidu/gpt-generative-ui"
+            target="_blank"
+          >
+            <button className="flex text-sm gap-2">
+              GITHUB <IconBrandGithub size={20} />
+            </button>
+          </a>
+        </div>
       </div>
-      <div className="!rotate-90 fixed bottom-14 -right-4">
+      <div className="!rotate-90 fixed bottom-14 -right-4 sm:hidden">
         <a
           href="https://github.com/abhisheknaiidu/gpt-generative-ui"
           target="_blank"
         >
           <button className="!text-[#FDDE00] btn">
-            GiTHUB <IconBrandGithub size={20} color="#FDDE00" />
+            GITHUB <IconBrandGithub size={20} color="#FDDE00" />
           </button>
         </a>
       </div>
