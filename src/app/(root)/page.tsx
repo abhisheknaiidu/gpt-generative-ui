@@ -51,7 +51,7 @@ export default function Chat() {
               <Image src={bonk} alt="Bonk" fill />
             </div>
           </div>
-          <h1 className="text-5xl leading-tight text-center uppercase break-words in-s sm:text-3xl sm:px-5">
+          <h1 className="text-5xl leading-tight text-center uppercase break-words in-s sm:text-3xl sm:max-w-80">
             Engage with <strong>Intuitive AI</strong>
             <br />
             and <strong>Generative UI</strong>
