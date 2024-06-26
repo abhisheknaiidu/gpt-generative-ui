@@ -43,11 +43,13 @@ export default function Chat() {
           filter: "drop-shadow(0px 4px 36px #B7A100)",
         }}
       />
-      <div className="min-h-[100dvh] flex flex-col justify-center items-center py-20 gap-10">
+      <div className="min-h-[100dvh] flex flex-col justify-center items-center py-20 gap-10 sm:gap-6">
         <div className="flex flex-col items-center gap-8 my-auto">
-          <div className="py-2 px-4 flex gap-4 bg-[#020227] bg-opacity-5 rounded-full">
+          <div className="py-2 px-4 flex items-center justify-center gap-3 bg-[#020227] bg-opacity-5 rounded-full sm:text-sm sm:gap-2 sm:px-3 sm:py-1.5">
             <div>POWERED BY BONK</div>
-            <Image src={bonk} alt="Bonk" height={24} />
+            <div className="relative h-6 w-6 sm:h-5 sm:w-5">
+              <Image src={bonk} alt="Bonk" fill />
+            </div>
           </div>
           <h1 className="text-5xl leading-tight text-center uppercase break-words in-s sm:text-3xl sm:px-5">
             Engage with <strong>Intuitive AI</strong>

@@ -39,7 +39,7 @@ const Header = () => {
   const handleBonkBurn = async () => {
     setLoading(true);
     try {
-      await addCredits(5, true);
+      await addCredits(3, true);
       setLoading(false);
     } catch (e) {
       console.log(e);
@@ -51,7 +51,7 @@ const Header = () => {
   const handlePaySol = async () => {
     setSolLoading(true);
     try {
-      await addCredits(5);
+      await addCredits(10);
       setSolLoading(false);
     } catch (e) {
       console.log(e);
@@ -140,9 +140,9 @@ const Header = () => {
                       <IconSparkles size={18} color="rgb(250 204 21)" />
                     )}
                     <div className="flex flex-col gap-0">
-                      <div className="text-gray-600">Add 5 Credits</div>
+                      <div className="text-gray-600">Add 3 Credits</div>
                       <div className="text-gray-400 text-xs">
-                        [{5 / bonkToCreditMultiplier} Bonk]
+                        [{3 / bonkToCreditMultiplier} Bonk]
                       </div>
                     </div>
                   </div>
