@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     if (!userAddress) {
       return NextResponse.json(
         {
-          error: "Missing user address in headers.",
+          error: "Please login to access this resource.",
         },
         { status: 400 }
       );

@@ -105,7 +105,9 @@ const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
               key={index}
               className="bg-white flex flex-col p-4 gap-3 rounded-lg transition-all duration-200 hover:shadow-2xl hover:bg-opacity-90"
             >
-              <h4 className="font-bold text-gray-600 sm:text-sm">{item.title}</h4>
+              <h4 className="font-bold text-gray-600 sm:text-sm">
+                {item.title}
+              </h4>
               <p className="text-sm text-gray-500">{item.description}</p>
             </div>
           ))}
@@ -231,7 +233,7 @@ export default function Page() {
   const currentItem = parseInt(hash.split("item")[1] || "0");
 
   const isExplainer = threadType === THREAD_TYPE.EXPLAIN;
-  const shouldLoadCarousel = publicKey?.toBase58() && isExplainer;
+  const shouldLoadCarousel = true;
   const { data, error, isLoading } = useSWR(
     [
       shouldLoadCarousel ? "/api/generate?topic=" + query : null,
@@ -413,7 +415,7 @@ export default function Page() {
                 maxWidth: `${MAX_W / 16}rem`,
               }}
             >
-              {isLoading || !data ? (
+              {isLoading ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -434,7 +436,7 @@ export default function Page() {
                   />
                   <span className="absolute loading loading-ring w-20"></span>
                 </motion.div>
-              ) : error ? (
+              ) : error || !data ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
