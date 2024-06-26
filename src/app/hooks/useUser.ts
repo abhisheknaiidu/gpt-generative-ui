@@ -59,7 +59,7 @@ export const useCreditsPurchase = () => {
         "5Z2xTTSu4gKtYP1c6RRcdraWz61zuSPgo8BXugviDpik"
       );
       const message = "test";
-      _signature = await payViaSol(wagmiQuestPublicKey, 0.001, true, message);
+      _signature = await payViaSol(wagmiQuestPublicKey, 0.0075, true, message);
       if (!_signature) {
         throw { message: "Failed to pay via sol" };
       }
