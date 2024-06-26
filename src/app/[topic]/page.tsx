@@ -35,8 +35,6 @@ import {
   THREAD_TYPE,
 } from "../types/chat";
 
-const MAX_W = 550;
-
 const ChatAssetPrice = ({ asset }: { asset: AssetPrice }) => {
   return (
     <div className=" flex items-center justify-between transition-all duration-200 hover:scale-[1.01] rounded-full cursor-pointer">
@@ -197,7 +195,27 @@ const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
   );
 };
 
+const PORTION = 0.9;
+const BASE_SIZE = 639 * PORTION;
+const getMaxWidth = () => {
+  if (typeof window === "undefined") return BASE_SIZE;
+  return window.innerWidth < BASE_SIZE / PORTION
+    ? window.innerWidth * PORTION
+    : BASE_SIZE;
+};
+
 export default function Page() {
+  // const MAX_W = 550;
+  const [MAX_W, setMAX_W] = useState(getMaxWidth());
+  useEffect(() => {
+    const handleResize = () => {
+      setMAX_W(getMaxWidth());
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const initialCallDone = useRef(false);
   const params = useParams();
   const searchParams = useSearchParams();
