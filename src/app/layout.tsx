@@ -107,9 +107,7 @@ export default function RootLayout({
           property="twitter:description"
           content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly"
         />
-        <meta property="twitter:image" content="/og.png" />
-        <meta property="twitter:site" content="@wagmiquest" />
-        <meta property="twitter:creator" content="@wagmiquest" />
+        <meta name="twitter:image" content="https://www.wagmi.quest/og.png" />
         <title>Wagmi Quest: Engage with Intuitive AI and Generative UI</title>
       </head>
       {
