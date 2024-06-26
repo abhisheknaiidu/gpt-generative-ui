@@ -2,8 +2,10 @@ import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { kvClient } from "./users";
 import { bonkToCreditMultiplier } from "@/utils/constants";
 
-const generateSignatureUsageKey = (signature: string) =>
+const generateBonkSignatureUsageKey = (signature: string) =>
   `purchase-signature:${signature}`;
+const generateSolSignatureUsageKey = (signature: string) =>
+  `purchase-signature-sol:${signature}`;
 
 export const verifyBurn = async (signature: string | null, amount: number) => {
   if (!signature) {
@@ -30,7 +32,7 @@ export const verifyBurn = async (signature: string | null, amount: number) => {
     throw { status: 400, message: "Invalid signature." };
   }
 
-  const key = generateSignatureUsageKey(signature);
+  const key = generateBonkSignatureUsageKey(signature);
   const flag = await kvClient.get<boolean>(key);
   if (flag) {
     throw { status: 400, message: "Signature already used." };
@@ -54,34 +56,40 @@ const extractInteger = (buffer: Buffer) => {
 const RPC_URL =
   "https://solana-mainnet.g.alchemy.com/v2/22rQ_17IgqNqjh6L3zozhPBksczluake";
 
-export const verifyPayment = async (signature: string) => {
-  const sigs = await fetch(RPC_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Origin: "https://explorer.solana.com",
-    },
-    body: JSON.stringify({
-      method: "getConfirmedSignaturesForAddress2",
-      jsonrpc: "2.0",
-      params: [
-        "5Z2xTTSu4gKtYP1c6RRcdraWz61zuSPgo8BXugviDpik",
-        {
-          limit: 50,
-        },
-      ],
-    }),
-  });
-  const data = await sigs.json();
-  console.log("recentTransactions", data);
+export const verifyPayment = async (
+  signature: string | null,
+  amount: number
+) => {
+  if (!signature) {
+    throw { status: 400, message: "Missing signature in headers." };
+  }
 
-  // const recentTransactions = data?.result?.map(
-  //   (transaction: any) => transaction.signature
-  // );
-  // console.log("recentTransactions", recentTransactions);
+  // const sigs = await fetch(RPC_URL, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     Origin: "https://explorer.solana.com",
+  //   },
+  //   body: JSON.stringify({
+  //     method: "getConfirmedSignaturesForAddress2",
+  //     jsonrpc: "2.0",
+  //     params: [
+  //       "5Z2xTTSu4gKtYP1c6RRcdraWz61zuSPgo8BXugviDpik",
+  //       {
+  //         limit: 50,
+  //       },
+  //     ],
+  //   }),
+  // });
+  // const data = await sigs.json();
+  // console.log("recentTransactions", data);
 
-  // return recentTransactions.includes(signature);
-  return true;
+  const key = generateSolSignatureUsageKey(signature);
+  const flag = await kvClient.get<boolean>(key);
+  if (flag) {
+    throw { status: 400, message: "Signature already used." };
+  }
+  await kvClient.set(key, true);
 };
 
 const connection = new Connection(
@@ -90,22 +98,3 @@ const connection = new Connection(
     commitment: "confirmed",
   }
 );
-
-export const fetchTransactions = async () => {
-  try {
-    const pubKey = new PublicKey(
-      "5Z2xTTSu4gKtYP1c6RRcdraWz61zuSPgo8BXugviDpik"
-    );
-    const signatures = await connection.getSignaturesForAddress(pubKey, {
-      limit: 5,
-    });
-    const transactionDetails = await connection.getParsedTransactions(
-      signatures.map((sig) => sig.signature),
-      { maxSupportedTransactionVersion: 0 }
-    );
-    // setTransactions(transactionDetails);
-    console.log("transactionDetails", transactionDetails);
-  } catch (error) {
-    console.error("Error fetching transactions:", error);
-  }
-};
