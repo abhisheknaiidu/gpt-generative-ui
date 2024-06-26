@@ -26,7 +26,7 @@ const onest = Onest({ subsets: ["latin"] });
 //       "Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly",
 //     images: [
 //       {
-//         url: "/og.jpg",
+//         url: "/og.png",
 //         width: 1200,
 //         height: 630,
 //         alt: "Wagmi Quest: Engage with Intuitive AI and Generative UI",
@@ -37,7 +37,7 @@ const onest = Onest({ subsets: ["latin"] });
 //     card: "summary_large_image",
 //     images: [
 //       {
-//         url: "/og.jpg",
+//         url: "/og.png",
 //         width: 1200,
 //         height: 630,
 //         alt: "Wagmi Quest: Engage with Intuitive AI and Generative UI",
@@ -92,7 +92,7 @@ export default function RootLayout({
           property="og:description"
           content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly"
         />
-        <meta property="og:image" content="/og.jpg" />
+        <meta property="og:image" content="/og.png" />
         <meta property="og:site_name" content="Wagmi Quest" />
         <meta property="og:locale" content="en_US" />
 
@@ -107,7 +107,7 @@ export default function RootLayout({
           property="twitter:description"
           content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly"
         />
-        <meta property="twitter:image" content="/og.jpg" />
+        <meta property="twitter:image" content="/og.png" />
         <meta property="twitter:site" content="@wagmiquest" />
         <meta property="twitter:creator" content="@wagmiquest" />
         <title>Wagmi Quest: Engage with Intuitive AI and Generative UI</title>
