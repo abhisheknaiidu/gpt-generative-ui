@@ -25,7 +25,7 @@ export const burnBONK = async (mint: string, amount: number) => {
   const wallet = getWallet();
   const burner = await connectWallet();
   const connection = new Connection(
-    "https://solana-devnet.g.alchemy.com/v2/22rQ_17IgqNqjh6L3zozhPBksczluake",
+    "https://solana-mainnet.g.alchemy.com/v2/22rQ_17IgqNqjh6L3zozhPBksczluake",
     {
       commitment: "processed",
     }
@@ -50,7 +50,7 @@ export const burnBONK = async (mint: string, amount: number) => {
       burnerAccountAddress,
       new PublicKey(mint),
       burner,
-      amount * 10 ** 4
+      amount * 10 ** 5
     )
   );
 
@@ -58,22 +58,17 @@ export const burnBONK = async (mint: string, amount: number) => {
   const { blockhash } = await connection.getLatestBlockhash("finalized");
   transaction.recentBlockhash = blockhash;
   transaction.feePayer = burner;
+  const { signature } = await window.solana.signAndSendTransaction(transaction);
+  const latestBlockHash = await connection.getLatestBlockhash();
 
-  if (wallet) {
-    try {
-      signedTransaction = await wallet.signTransaction(transaction);
-    } catch (e: any) {
-      return;
-    }
-  } else return;
-
-  const txid = await connection.sendRawTransaction(
-    signedTransaction.serialize()
-  );
-
-  if (txid) {
-    const signature = await signedTransaction.serialize().toString("base64");
-    return signature;
+  const confirmation = await connection.confirmTransaction({
+    blockhash: latestBlockHash.blockhash,
+    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+    signature,
+  });
+  if (confirmation.value.err) {
+    console.error("Transaction failed:", confirmation.value.err);
+    return toast.error("something went wrong");
   }
-  toast.error("Failed to send transaction");
+  return signature;
 };
