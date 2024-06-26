@@ -138,7 +138,7 @@ export default function Chat() {
             </form>
           </div>
         </div>
-        <div className="in-s uppercase max-w-[33rem] text-center text-sm opacity-80 sm:mx-10 sm:text-xs">
+        <div className="in-s uppercase max-w-[33rem] text-center text-sm opacity-80 sm:hidden">
           Discover a smarter way to explore. It not only provides detailed
           insights but also creates interactive UI components on-the-fly
         </div>
