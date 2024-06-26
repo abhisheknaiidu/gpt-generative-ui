@@ -39,4 +39,6 @@ pre > code {
   padding: 1.33em;
   border-radius: 0.33em;
   white-space: break-spaces;
+  overflow: hidden;
+  word-wrap: break-word !important;
 }

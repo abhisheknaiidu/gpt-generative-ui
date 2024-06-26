@@ -94,18 +94,18 @@ const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
           translateX: source === ChatSource.USER ? 10 : -10,
         }}
         animate={{ opacity: 1, scale: 1, translateX: 0 }}
-        className="flex flex-col gap-3 p-3 rounded-lg max-w-[90%] bg-black bg-opacity-5 text-gray-500 border-gray-500 border self-start rounded-tl-none"
+        className="flex flex-col gap-3 p-3 rounded-lg max-w-[90%] bg-black bg-opacity-5 text-gray-500 border-gray-500 border self-start rounded-tl-none sm:p-2.5 sm:gap-2"
       >
-        <h3 className="text-lg font-bold text-gray-700">
+        <h3 className="text-lg font-bold text-gray-700 sm:text-base sm:py-1">
           {(data as CHATDataListData).title}
         </h3>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 sm:gap-2">
           {(data as CHATDataListData).items.map((item, index) => (
             <div
               key={index}
               className="bg-white flex flex-col p-4 gap-3 rounded-lg transition-all duration-200 hover:shadow-2xl hover:bg-opacity-90"
             >
-              <h4 className="font-bold text-gray-600">{item.title}</h4>
+              <h4 className="font-bold text-gray-600 sm:text-sm">{item.title}</h4>
               <p className="text-sm text-gray-500">{item.description}</p>
             </div>
           ))}
@@ -123,9 +123,9 @@ const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
           translateX: source === ChatSource.USER ? 10 : -10,
         }}
         animate={{ opacity: 1, scale: 1, translateX: 0 }}
-        className="flex flex-col gap-3 p-5 rounded-lg w-[80%] bg-transparent text-gray-500 border-gray-300 border self-start rounded-tl-none"
+        className="flex flex-col gap-3 p-5 rounded-lg w-[80%] bg-transparent text-gray-500 border-gray-300 border self-start rounded-tl-none sm:p-4"
       >
-        <h3 className="text-lg font-bold text-gray-700 mr-10">
+        <h3 className="text-lg font-bold text-gray-700 mr-10 sm:text-base">
           {(data as CHATCoinListData).title}
         </h3>
         <div className="flex flex-col gap-3">
@@ -152,9 +152,9 @@ const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
           translateX: source === ChatSource.USER ? 10 : -10,
         }}
         animate={{ opacity: 1, scale: 1, translateX: 0 }}
-        className="flex flex-col gap-3 p-5 rounded-lg w-[80%] bg-transparent text-gray-500 border-gray-300 border self-start rounded-tl-none"
+        className="flex flex-col gap-3 p-5 rounded-lg w-[80%] bg-transparent text-gray-500 border-gray-300 border self-start rounded-tl-none sm:p-4"
       >
-        <h3 className="text-lg font-bold text-gray-700 mr-10">
+        <h3 className="text-lg font-bold text-gray-700 mr-10 sm:text-base">
           {(data as CHATCoinPriceData).title}
         </h3>
         <div className="flex flex-col gap-3">
@@ -174,7 +174,7 @@ const ChatMessage = ({ chatItem }: { chatItem: ChatItem }) => {
         translateX: source === ChatSource.USER ? 10 : -10,
       }}
       animate={{ opacity: 1, scale: 1, translateX: 0 }}
-      className={classNames("p-2.5 px-4 rounded-lg max-w-[95%]", {
+      className={classNames("p-2.5 px-4 rounded-lg max-w-[95%] sm:text-sm", {
         "bg-[#FDDE00] self-end border border-gray-300 rounded-tr-none":
           source === ChatSource.USER,
         "bg-transparent border-gray-300 border self-start rounded-tl-none":
@@ -394,7 +394,8 @@ export default function Page() {
                 "btn btn-xs !bg-white bg-opacity-70 outline-none border-none px-4 py-1.5 !h-fit",
                 {
                   "opacity-50 cursor-not-allowed": currentItem === 0,
-                }
+                },
+                "sm:hidden"
               )}
               aria-disabled={currentItem === 0}
               tabIndex={currentItem === 0 ? -1 : undefined}
@@ -407,10 +408,9 @@ export default function Page() {
               <IconChevronLeft size={16} />
             </div>
             <div
-              // className="carousel flex gap-4"
-              className="flex gap-4"
+              className="flex flex-col items-center justify-center gap-4"
               style={{
-                maxWidth: `${MAX_W / 16}rem overflow-hidden`,
+                maxWidth: `${MAX_W / 16}rem`,
               }}
             >
               {isLoading || !data ? (
@@ -459,22 +459,62 @@ export default function Page() {
                   </h3>
                 </motion.div>
               ) : (
-                data.data.map(
-                  (item: any, index: number) =>
-                    index === currentItem && (
+                <>
+                  <div
+                    className="flex gap-4 sm:hidden"
+                    style={{
+                      maxWidth: `${MAX_W / 16}rem`,
+                    }}
+                    key="desktop"
+                  >
+                    {data.data.map(
+                      (item: any, index: number) =>
+                        index === currentItem && (
+                          <div
+                            key={index}
+                            // id={`item${index}`}
+                            // className="carousel-item"
+                          >
+                            <TopicCard
+                              cardType={item.imageDimensions}
+                              cardIndex={index}
+                              cardProps={{
+                                title: item.title,
+                                description: item.description,
+                                // image:
+                                //   "https://oaidalleapiprodscus.blob.core.windows.net/private/org-VtjMqVcJ39WS0ytH0Qr3sqxF/user-OyCviQyV6tSxjLBAdKWc2RQ8/img-ChDiS3IAPMBRJeUYErtjjYxY.png?st=2024-05-31T22%3A57%3A52Z&se=2024-06-01T00%3A57%3A52Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-31T23%3A49%3A30Z&ske=2024-06-01T23%3A49%3A30Z&sks=b&skv=2023-11-03&sig=gQWvw8C0BKe7kXdL173T9cOSTtojtqLxm6f4kexmRWI%3D",
+                                image: {
+                                  prompt: item.imageGenerationPrompt,
+                                  size: item.imageDimensions,
+                                },
+                                size: MAX_W,
+                              }}
+                            />
+                          </div>
+                        )
+                    )}
+                  </div>
+                  <div
+                    className="hidden sm:flex sm:carousel sm:carousel-center overflow-x-scroll space-x-3"
+                    style={{
+                      maxWidth: `100vw`,
+                      paddingLeft: `5%`,
+                      paddingRight: `5%`,
+                    }}
+                    key="mobile"
+                  >
+                    {data.data.map((item: any, index: number) => (
                       <div
                         key={index}
-                        // id={`item${index}`}
-                        // className="carousel-item"
+                        id={`item${index}`}
+                        className="carousel-item"
                       >
                         <TopicCard
                           cardType={item.imageDimensions}
-                          cardIndex={index}
+                          cardIndex={0}
                           cardProps={{
                             title: item.title,
                             description: item.description,
-                            // image:
-                            //   "https://oaidalleapiprodscus.blob.core.windows.net/private/org-VtjMqVcJ39WS0ytH0Qr3sqxF/user-OyCviQyV6tSxjLBAdKWc2RQ8/img-ChDiS3IAPMBRJeUYErtjjYxY.png?st=2024-05-31T22%3A57%3A52Z&se=2024-06-01T00%3A57%3A52Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-31T23%3A49%3A30Z&ske=2024-06-01T23%3A49%3A30Z&sks=b&skv=2023-11-03&sig=gQWvw8C0BKe7kXdL173T9cOSTtojtqLxm6f4kexmRWI%3D",
                             image: {
                               prompt: item.imageGenerationPrompt,
                               size: item.imageDimensions,
@@ -483,8 +523,12 @@ export default function Page() {
                           }}
                         />
                       </div>
-                    )
-                )
+                    ))}
+                  </div>
+                  <div className="bg-white px-5 py-1 bg-opacity-60 rounded-full text-xs sm:hidden">
+                    {currentItem + 1} / {data.data.length}
+                  </div>
+                </>
               )}
             </div>
             <div
@@ -493,7 +537,8 @@ export default function Page() {
                 {
                   "opacity-50 cursor-not-allowed":
                     !data?.data || currentItem >= data.data.length - 1,
-                }
+                },
+                "sm:hidden"
               )}
               aria-disabled={!data?.data || currentItem >= data.data.length - 1}
               tabIndex={

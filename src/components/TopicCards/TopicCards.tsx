@@ -58,7 +58,7 @@ const Image = (props: React.ComponentProps<typeof NextImage>) => {
 export const TopicCard1 = ({ title, description, image, size }: Props) => {
   return (
     <div
-      className="bg-white p-3 rounded-3xl flex flex-col gap-0"
+      className="bg-white p-3 rounded-3xl flex flex-col gap-0 sm:p-2.5"
       style={{
         width: `${size / 16}rem`,
         height: `${size / 16}rem`,
@@ -72,13 +72,13 @@ export const TopicCard1 = ({ title, description, image, size }: Props) => {
       >
         <Image fill src={image} alt={title} objectFit="cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
-        <p className="text-black absolute bottom-3 left-4 z-20 text-xl font-bold">
+        <p className="text-black absolute bottom-3 left-4 z-20 text-xl font-bold sm:bottom-1 sm:left-2 sm:text-lg">
           {title}
         </p>
       </div>
-      <div className="flex flex-col gap-3 p-3">
+      <div className="flex flex-col gap-3 p-3 sm:p-1.5 sm:gap-0">
         {description.map((desc, index) => (
-          <p key={index} className="text-gray-500 text-sm">
+          <p key={index} className="text-gray-500 text-sm sm:text-sm">
             {desc}
           </p>
         ))}
@@ -188,7 +188,7 @@ export const TopicCard5 = ({ title, description, image, size }: Props) => {
   description = description.slice(0, 3);
   return (
     <div
-      className="bg-white p-3 rounded-3xl flex flex-row gap-0"
+      className="bg-white p-3 rounded-3xl flex flex-row gap-0 sm:p-2.5"
       style={{
         width: `${size / 16}rem`,
         height: `${size / 16}rem`,
@@ -197,19 +197,18 @@ export const TopicCard5 = ({ title, description, image, size }: Props) => {
       <div
         className="h-full relative rounded-xl rounded-b-none overflow-hidden flex-shrink-0"
         style={{
-          // aspectRatio: "1024/1792",
           aspectRatio: "1024/1992",
         }}
       >
         <Image fill src={image} alt={title} objectFit="cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
-        <p className="text-black absolute bottom-5 left-5 z-20 text-xl font-bold w-3/4">
+        <p className="text-black absolute bottom-5 left-5 z-20 text-xl font-bold w-3/4 sm:bottom-2 sm:left-2 sm:text-lg">
           {title}
         </p>
       </div>
-      <div className="flex flex-col gap-5 px-4 py-2">
+      <div className="flex flex-col gap-5 px-4 py-2 sm:px-3 sm:py-1.5  sm:gap-2">
         {description.map((desc, index) => (
-          <p key={index} className="text-gray-600 text-sm">
+          <p key={index} className="text-gray-600 text-sm sm:text-sm">
             {desc}
           </p>
         ))}
@@ -223,13 +222,13 @@ export const TopicCard6 = ({ title, description, image, size }: Props) => {
   description = description.slice(0, 3);
   return (
     <div
-      className="bg-white p-3 rounded-3xl flex flex-col"
+      className="bg-white p-3 rounded-3xl flex flex-col sm:p-2.5 gap-0"
       style={{
         width: `${size / 16}rem`,
         height: `${size / 16}rem`,
       }}
     >
-      <div className="w-full grid grid-cols-2 gap-6 p-2">
+      <div className="w-full grid grid-cols-2 gap-6 p-2 sm:p-0 sm:gap-3">
         <div
           className="w-full relative rounded-xl overflow-hidden"
           style={{
@@ -238,11 +237,13 @@ export const TopicCard6 = ({ title, description, image, size }: Props) => {
         >
           <Image fill src={image} alt={title} objectFit="cover" />
         </div>
-        <p className="text-black text-2xl font-bold text-left mt-2">{title}</p>
+        <p className="text-black text-2xl font-bold text-left mt-2 sm:text-lg">
+          {title}
+        </p>
       </div>
-      <div className="flex flex-col gap-5 p-3">
+      <div className="flex flex-col gap-5 p-3 sm:gap-2">
         {description.map((desc, index) => (
-          <p key={index} className="text-gray-500 text-sm">
+          <p key={index} className="text-gray-500 text-sm sm:text-sm">
             {desc}
           </p>
         ))}
@@ -318,7 +319,7 @@ export const TopicCard8 = ({ title, description, image, size }: Props) => {
 export const TopicCard9 = ({ title, description, image, size }: Props) => {
   return (
     <div
-      className="bg-white p-3 relative rounded-3xl flex flex-col gap-0"
+      className="bg-white p-3 relative rounded-3xl flex flex-col gap-0 sm:p-2"
       style={{
         width: `${size / 16}rem`,
         height: `${size / 16}rem`,
@@ -333,10 +334,15 @@ export const TopicCard9 = ({ title, description, image, size }: Props) => {
         <Image fill src={image} alt={title} objectFit="cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#ffffffbb] to-white" />
       </div>
-      <div className="absolute top-10 flex flex-col items-center gap-6 justify-center p-3">
-        <p className="text-black text-xl font-bold text-center">{title}</p>
+      <div className="absolute top-10 flex flex-col items-center gap-6 justify-center p-3 sm:top-6 sm:px-3 sm:py-2 sm:gap-3">
+        <p className="text-black text-xl font-bold text-center sm:text-lg">
+          {title}
+        </p>
         {description.map((desc, index) => (
-          <p key={index} className="text-gray-500 text-sm text-center">
+          <p
+            key={index}
+            className="text-gray-500 text-sm text-center sm:text-sm"
+          >
             {desc}
           </p>
         ))}
@@ -351,7 +357,7 @@ const CardMappingBasedOnImageDimensions: {
   "1792x1024": [TopicCard1, TopicCard2, TopicCard3, TopicCard4],
   "1024x1792": [TopicCard5],
   "512x512": [TopicCard6, TopicCard7],
-  "1024x1024": [TopicCard8, TopicCard9],
+  "1024x1024": [TopicCard9, TopicCard8],
 };
 
 export const TopicCard = ({
@@ -359,7 +365,7 @@ export const TopicCard = ({
   cardIndex,
   cardProps,
 }: {
-  cardType: string;
+  cardType: keyof typeof CardMappingBasedOnImageDimensions;
   cardIndex: number;
   cardProps: {
     title: string;
@@ -378,20 +384,22 @@ export const TopicCard = ({
     ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <Card
-        title={cardProps.title}
-        description={cardProps.description}
-        image={`/api/image?prompt=${encodeURIComponent(
-          cardProps.image.prompt
-        )}&size=${encodeURIComponent(cardProps.image.size)}`}
-        size={cardProps.size}
-      />
-    </motion.div>
+    <>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card
+          title={cardProps.title}
+          description={cardProps.description}
+          image={`/api/image?prompt=${encodeURIComponent(
+            cardProps.image.prompt
+          )}&size=${encodeURIComponent(cardProps.image.size)}`}
+          size={cardProps.size}
+        />
+      </motion.div>
+    </>
   );
 };
 
