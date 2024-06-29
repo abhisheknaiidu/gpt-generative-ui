@@ -88,16 +88,21 @@ export default function RootLayout({
         <meta property="og:url" content="https://www.wagmi.quest/" />
         <meta property="og:title" content="Wagmi Quest: Engage with Intuitive AI and Generative UI" />
         <meta property="og:description" content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly" />
-        <meta property="og:image" content="https://www.wagmi.quest/og.png" />
+        <meta property="og:image" content="/og.png" />
 
         {/* twitter */}
-        <meta name="twitter:image" content="https://www.wagmi.quest/og.png" />
-        <meta name="twitter:image:src" content="https://www.wagmi.quest/og.png" />
+        {/* <meta name="twitter:image" content="/og.png" itemType="image/png" />
+        <meta name="twitter:image:src" content="/og.png" itemType="image/png" />
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://www.wagmi.quest/" />
         <meta property="twitter:title" content="Wagmi Quest: Engage with Intuitive AI and Generative UI" />
         <meta property="twitter:description" content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly" />
-        <meta property="twitter:image" content="https://www.wagmi.quest/og.png" />
+        <meta property="twitter:image" content="/og.png" itemType="image/png" /> */}
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Wagmi Quest: Engage with Intuitive AI and Generative UI">
+        <meta name="twitter:description" content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly">
+        <meta name="twitter:image" content="http://graphics8.nytimes.com/images/2012/02/19/us/19whitney-span/19whitney-span-articleLarge.jpg">
+
         <title>Wagmi Quest: Engage with Intuitive AI and Generative UI</title>
       </head>
       {
