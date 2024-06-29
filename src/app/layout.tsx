@@ -92,6 +92,7 @@ export default function RootLayout({
 
         {/* twitter */}
         <meta name="twitter:image" content="https://www.wagmi.quest/og.png" />
+        <meta name="twitter:image:src" content="https://www.wagmi.quest/og.png" />
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://www.wagmi.quest/" />
         <meta property="twitter:title" content="Wagmi Quest: Engage with Intuitive AI and Generative UI" />
