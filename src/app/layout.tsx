@@ -82,32 +82,21 @@ export default function RootLayout({
         <meta name="language" content="English" />
 
         {/* og */}
-        <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.wagmi.quest" />
-        <meta
-          property="og:title"
-          content="Wagmi Quest: Engage with Generative UI"
-        />
-        <meta
-          property="og:description"
-          content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly"
-        />
-        <meta property="og:image" content="/og.png" />
-        <meta property="og:site_name" content="Wagmi Quest" />
         <meta property="og:locale" content="en_US" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.wagmi.quest/" />
+        <meta property="og:title" content="Wagmi Quest: Engage with Intuitive AI and Generative UI" />
+        <meta property="og:description" content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly" />
+        <meta property="og:image" content="https://www.wagmi.quest/og.png" />
 
         {/* twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://www.wagmi.quest" />
-        <meta
-          property="twitter:title"
-          content="Wagmi Quest: Engage with Generative UI"
-        />
-        <meta
-          property="twitter:description"
-          content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly"
-        />
         <meta name="twitter:image" content="https://www.wagmi.quest/og.png" />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://www.wagmi.quest/" />
+        <meta property="twitter:title" content="Wagmi Quest: Engage with Intuitive AI and Generative UI" />
+        <meta property="twitter:description" content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly" />
+        <meta property="twitter:image" content="https://www.wagmi.quest/og.png" />
         <title>Wagmi Quest: Engage with Intuitive AI and Generative UI</title>
       </head>
       {
