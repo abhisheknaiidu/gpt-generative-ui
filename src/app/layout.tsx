@@ -88,10 +88,10 @@ export default function RootLayout({
         <meta property="og:url" content="https://www.wagmi.quest/" />
         <meta property="og:title" content="Wagmi Quest: Engage with Intuitive AI and Generative UI" />
         <meta property="og:description" content="Discover a Smarter Way To Learn and Find Information With Our AI-Driven Platform. It Not Only Provides Detailed Insights but Also Creates Interactive UI Components On-the-Fly" />
-        <meta property="og:image" content="/og.png" />
+        <meta property="og:image" content="https://www.wagmi.quest/og.png" />
 
         {/* twitter */}
-        {/* <meta name="twitter:image" content="/og.png" itemType="image/png" />
+        {/* <meta name="twitter:image" content="/og.p ng" itemType="image/png" />
         <meta name="twitter:image:src" content="/og.png" itemType="image/png" />
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://www.wagmi.quest/" />
